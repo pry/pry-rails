@@ -1,0 +1,5 @@
+Avoid repeating yourself, use pry-rails instead of copying the initializer to every rails project. Add this line to your gemfile:
+
+bc. gem 'pry-rails', :git => 'git://github.com/rweng/pry-rails.git', :group => :development
+
+@bundle install@ and enjoy pry.
