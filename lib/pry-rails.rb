@@ -1,8 +1,8 @@
 require "pry-rails/version"
 
 module PryRails
-  class Railtie < ::Rails::Railtie
-    if(defined? Rails)
+  if(defined? Rails)
+    class Railtie < ::Rails::Railtie
       silence_warnings do
         begin
           require 'pry'
