@@ -9,3 +9,7 @@ Avoid repeating yourself, use pry-rails instead of copying the initializer to ev
 bc. gem 'pry-rails', :group => :development
 
 @bundle install@ and enjoy pry.
+
+h1. Alternative
+
+If you want to enable pry everywhere, make sure to check out "http://lucapette.com/pry/pry-everywhere/":http://lucapette.com/pry/pry-everywhere/
