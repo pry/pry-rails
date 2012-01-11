@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = PryRails::VERSION
   s.authors     = ["Robin Wenglewski"]
   s.email       = ["robin@wenglewski.de"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/rweng/pry-rails"
   s.summary     = %q{Use Pry as your rails console}
   # s.description = %q{TODO: Write a gem description}
 
