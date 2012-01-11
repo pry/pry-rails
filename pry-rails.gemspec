@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
-  %w(pry pry-doc).each {|d| s.add_dependency d}
+  s.add_dependency "pry"
 end
