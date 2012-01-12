@@ -1,6 +1,7 @@
 # Description
 
-This is a small gem which causes `rails console` to open [pry](http://pry.github.com/). It therefore depends on *pry* and *pry-doc*.
+Avoid repeating yourself, use pry-rails instead of copying the initializer to every rails project.
+This is a small gem which causes `rails console` to open [pry](http://pry.github.com/). It therefore depends on *pry*.
 
 # Prerequisites
 
@@ -8,7 +9,7 @@ This is a small gem which causes `rails console` to open [pry](http://pry.github
 
 # Installation
 
-Avoid repeating yourself, use pry-rails instead of copying the initializer to every rails project. Add this line to your gemfile:
+Add this line to your gemfile:
 
 	gem 'pry-rails', :group => :development
 
