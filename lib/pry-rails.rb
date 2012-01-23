@@ -7,7 +7,9 @@ module PryRails
         begin
           require 'pry'
           ::IRB = Pry
-          IRB::ExtendCommandBundle = Pry
+          unless defined?(IRB::ExtendCommandBundle)
+            IRB::ExtendCommandBundle = Module.new
+          end
         rescue LoadError
         end
       end
