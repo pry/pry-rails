@@ -13,7 +13,7 @@ module PryRails
 					if ::Rails::VERSION::MINOR >= 2
 						require "rails/console/app"
 						require "rails/console/helpers"
-						Object.send(:include, Rails::ConsoleMethods) 
+						TOPLEVEL_BINDING.eval('self').extend Rails::ConsoleMethods
 					end
         rescue LoadError
         end
