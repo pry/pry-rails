@@ -6,19 +6,18 @@ module PryRails
       silence_warnings do
         begin
           require 'pry'
-          ::IRB = Pry
-          unless defined?(IRB::ExtendCommandBundle)
-            IRB::ExtendCommandBundle = Module.new
+          Rails::Console::IRB = Pry
+          unless defined?(Pry::ExtendCommandBundle)
+            Pry::ExtendCommandBundle = Module.new
           end
-					if ::Rails::VERSION::MINOR >= 2
-						require "rails/console/app"
-						require "rails/console/helpers"
-						TOPLEVEL_BINDING.eval('self').extend Rails::ConsoleMethods
-					end
+          if ::Rails::VERSION::MINOR >= 2
+            require "rails/console/app"
+            require "rails/console/helpers"
+            TOPLEVEL_BINDING.eval('self').extend Rails::ConsoleMethods
+          end
         rescue LoadError
         end
       end
     end
   end
 end
-
