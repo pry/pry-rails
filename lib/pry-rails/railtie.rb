@@ -23,4 +23,17 @@ module PryRails
       end
     end
   end
+  
+  Commands = Pry::CommandSet.new do
+    create_command "show-routes", "Print out all defined routes in match order, with names." do
+       def process
+         all_routes = Rails.application.routes.routes
+         require 'rails/application/route_inspector'
+         inspector = Rails::Application::RouteInspector.new
+         output.puts inspector.format(all_routes).join "\n"
+       end
+    end
+  end
 end
+
+Pry.commands.import PryGit::Commands
