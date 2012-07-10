@@ -36,4 +36,4 @@ module PryRails
   end
 end
 
-Pry.commands.import PryGit::Commands
+Pry.commands.import PryRails::Commands
