@@ -55,6 +55,20 @@ module PryRails
     end
 
     create_command "show-middleware" do
+      def options(opt)
+        opt.banner unindent <<-USAGE
+          Usage: show-middleware [-G]
+
+          show-middleware shows the Rails app's middleware.
+
+          If this pry REPL is attached to a Rails server, the entire middleware
+          stack is displayed.  Otherwise, only the middleware Rails knows about is
+          printed.
+        USAGE
+
+        opt.on :G, "grep", "Filter output by regular expression", :argument => true
+      end
+
       def process
         # assumes there is only one Rack::Server instance
         server = nil
@@ -75,14 +89,19 @@ module PryRails
         end
 
         middlewares.concat Rails.application.middleware.map(&:name)
-        print_middleware middlewares
-      end
+        middlewares << Rails.application.class.to_s
+        print_middleware middlewares.grep(Regexp.new(opts[:G] || "."))
+     end
 
       def print_middleware(middlewares)
         middlewares.each do |middleware|
-          puts "use #{middleware}"
+          string = if middleware == Rails.application.class.to_s
+            "run #{middleware}"
+          else
+            "use #{middleware}"
+          end
+          output.puts string
         end
-        puts "run #{Rails.application.class.to_s}"
       end
     end
   end
