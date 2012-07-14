@@ -15,13 +15,20 @@ module PryRails
         Rails.application.reload_routes!
         all_routes = Rails.application.routes.routes
 
-        # cribbed from
-        # https://github.com/rails/rails/blob/3-1-stable/railties/lib/rails/tasks/routes.rake
         all_routes = begin
-          require 'rails/application/route_inspector'
-          inspector = Rails::Application::RouteInspector.new
+          begin
+            # rails 4
+            require 'action_dispatch/routing/inspector'
+            inspector = ActionDispatch::Routing::RoutesInspector.new
+          rescue LoadError => e
+            # rails 3.2
+            require 'rails/application/route_inspector'
+            inspector = Rails::Application::RouteInspector.new
+          end
           inspector.format(all_routes)
         rescue LoadError => e
+          # rails 3.0 and 3.1. cribbed from
+          # https://github.com/rails/rails/blob/3-1-stable/railties/lib/rails/tasks/routes.rake
           routes = all_routes.collect do |route|
 
             reqs = route.requirements.dup
