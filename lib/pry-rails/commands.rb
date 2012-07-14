@@ -53,6 +53,38 @@ module PryRails
         output.puts all_routes.grep(Regexp.new(opts[:G] || ".")).join "\n"
       end
     end
+
+    create_command "show-middleware" do
+      def process
+        # assumes there is only one Rack::Server instance
+        server = nil
+        ObjectSpace.each_object(Rack::Server) do |object|
+          server = object
+        end
+
+        middlewares = []
+
+        if server
+          stack = server.instance_variable_get("@wrapped_app")
+          middlewares << stack.class.to_s
+
+          while stack.instance_variable_defined?("@app") do
+            stack = stack.instance_variable_get("@app")
+            middlewares << stack.class.to_s  if stack != Rails.application.class
+          end
+        end
+
+        middlewares.concat Rails.application.middleware.map(&:name)
+        print_middleware middlewares
+      end
+
+      def print_middleware(middlewares)
+        middlewares.each do |middleware|
+          puts "use #{middleware}"
+        end
+        puts "run #{Rails.application.class.to_s}"
+      end
+    end
   end
 end
 
