@@ -84,19 +84,31 @@ module PryRails
 
           while stack.instance_variable_defined?("@app") do
             stack = stack.instance_variable_get("@app")
-            middlewares << stack.class.to_s  if stack != Rails.application.class
+            # Rails 3.0 uses the Application class rather than the application
+            # instance itself, so we grab the instance.
+            stack = Rails.application  if stack == Rails.application.class
+            middlewares << stack.class.to_s  if stack != Rails.application
           end
+        else
+          middleware_names = Rails.application.middleware.map do |middleware|
+            # After Rails 3.0, the middleware are wrapped in a special class
+            # that responds to #name.
+            if middleware.respond_to?(:name)
+              middleware.name
+            else
+              middleware.inspect
+            end
+          end
+          middlewares.concat middleware_names
         end
-
-        middlewares.concat Rails.application.middleware.map(&:name)
         middlewares << Rails.application.class.to_s
         print_middleware middlewares.grep(Regexp.new(opts[:G] || "."))
-     end
+      end
 
       def print_middleware(middlewares)
         middlewares.each do |middleware|
           string = if middleware == Rails.application.class.to_s
-            "run #{middleware}"
+            "run #{middleware}.routes"
           else
             "use #{middleware}"
           end
