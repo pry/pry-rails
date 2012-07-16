@@ -68,7 +68,11 @@ module PryRails
       def process
         Rails.application.eager_load!
         models = ActiveRecord::Base.descendants.map do |mod|
-          mod.to_s + "\n" + mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
+          if mod.table_exists?
+            mod.to_s + "\n" + mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
+          else
+            mod.to_s + "\n" + "  Table does not exist"
+          end
         end.join("\n")
         
         models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) } unless opts[:G].nil?
