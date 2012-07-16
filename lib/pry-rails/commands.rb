@@ -62,7 +62,7 @@ module PryRails
           show-models displays the current Rails app's models.
         USAGE
         
-        opt.on :G, "grep", "Filter output by regular expression", :argument => true
+        opt.on :G, "grep", "Color output red by regular expression", :argument => true
       end
 
       def process
@@ -71,7 +71,7 @@ module PryRails
           mod.to_s + "\n" + mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
         end.join("\n")
         
-        models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) }
+        models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) } unless opts[:G].nil?
         
         output.puts models
       end
