@@ -8,6 +8,7 @@ task :init_test_app do
   `rm -rf test/app >/dev/null 2>&1`
   `env BUNDLE_GEMFILE=gemfiles/rails30.gemfile bundle exec rails new test/app`
   FileUtils.cp("test/routes.rb", "test/app/config/routes.rb")
+  FileUtils.cp_r("test/models/", "test/app/app/models/")
   File.open("test/app/Gemfile", 'a+') { |f| f.write(%Q{gem "pry-rails", :path => "../../"}) }
   FileUtils.cd("test/app")
   `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle install`
