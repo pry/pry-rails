@@ -53,6 +53,24 @@ module PryRails
         output.puts all_routes.grep(Regexp.new(opts[:G] || ".")).join "\n"
       end
     end
+    
+    create_command "show-models", "Print out all defined models, with attribrutes." do
+      def options(opt)
+        opt.banner unindent <<-USAGE
+          Usage: show-models
+
+          show-models displays the current Rails app's models.
+        USAGE
+      end
+
+      def process
+        Rails.application.eager_load!
+        models = ActiveRecord::Base.descendants.map do |mod|
+          mod.to_s + "\n" + mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
+        end.join("\n")
+        
+        output.puts models
+      end
+    end
   end
 end
-
