@@ -9,7 +9,7 @@ desc 'Create test Rails app'
 task :init_test_app => 'appraisal:install' do
   # Remove and generate test app using Rails 3.0
   rm_rf 'test/app'
-  `env BUNDLE_GEMFILE=gemfiles/rails30.gemfile bundle exec rails new test/app`
+  system 'env BUNDLE_GEMFILE=gemfiles/rails30.gemfile bundle exec rails new test/app'
 
   # Copy test routes file into place
   cp 'test/routes.rb', 'test/app/config/routes.rb'
@@ -22,9 +22,10 @@ task :init_test_app => 'appraisal:install' do
 
   # Generate a few models
   cd 'test/app'
-  `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Pokemon name:string caught:binary species:string abilities:string`
-  `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Hacker social_ability:integer`
-  `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Beer name:string type:string rating:integer ibu:integer abv:integer`
+  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Pokemon name:string caught:binary species:string abilities:string'
+  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Hacker social_ability:integer'
+  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Beer name:string type:string rating:integer ibu:integer abv:integer'
+  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rake db:migrate'
 end
 
 desc 'Start the Rails server'
