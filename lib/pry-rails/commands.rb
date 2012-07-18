@@ -1,6 +1,8 @@
 module PryRails
   Commands = Pry::CommandSet.new do
     create_command "show-routes", "Print out all defined routes in match order, with names." do
+      group "Rails"
+
       def options(opt)
         opt.banner unindent <<-USAGE
           Usage: show-routes [-G]
@@ -53,15 +55,17 @@ module PryRails
         output.puts all_routes.grep(Regexp.new(opts[:G] || ".")).join "\n"
       end
     end
-    
+
     create_command "show-models", "Print out all defined models, with attribrutes." do
+      group "Rails"
+
       def options(opt)
         opt.banner unindent <<-USAGE
           Usage: show-models
 
           show-models displays the current Rails app's models.
         USAGE
-        
+
         opt.on :G, "grep", "Filter output by regular expression", :argument => true
       end
 
@@ -70,9 +74,9 @@ module PryRails
         models = ActiveRecord::Base.descendants.map do |mod|
           mod.to_s + "\n" + mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
         end.join("\n")
-        
+
         models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) }
-        
+
         output.puts models
       end
     end
