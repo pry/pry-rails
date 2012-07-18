@@ -3,13 +3,25 @@ require "bundler/setup"
 require "bundler/gem_tasks"
 require "appraisal"
 
+include FileUtils
+
 desc 'Create test Rails app'
-task :init_test_app do
-  `rm -rf test/app >/dev/null 2>&1`
+task :init_test_app => 'appraisal:install' do
+  # Remove and generate test app using Rails 3.0
+  rm_rf 'test/app'
   `env BUNDLE_GEMFILE=gemfiles/rails30.gemfile bundle exec rails new test/app`
-  FileUtils.cp("test/routes.rb", "test/app/config/routes.rb")
-  File.open("test/app/Gemfile", 'a+') { |f| f.write(%Q{gem "pry-rails", :path => "../../"}) }
-  FileUtils.cd("test/app")
+
+  # Copy test routes file into place
+  cp 'test/routes.rb', 'test/app/config/routes.rb'
+
+  # Remove rjs line from environment, since it's gone in versions >= 3.1
+  env_contents = File.readlines('test/app/config/environments/development.rb')
+  File.open('test/app/config/environments/development.rb', 'w') do |f|
+    f.puts env_contents.reject { |l| l =~ /rjs/ }.join("\n")
+  end
+
+  # Generate a few models
+  cd 'test/app'
   `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Pokemon name:string caught:binary species:string abilities:string`
   `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Hacker social_ability:integer`
   `env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Beer name:string type:string rating:integer ibu:integer abv:integer`

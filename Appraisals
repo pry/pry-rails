@@ -1,5 +1,6 @@
 appraise "rails30" do
   gem "rails", "3.0.15"
+  gem "sqlite3"
 end
 
 appraise "rails31" do
