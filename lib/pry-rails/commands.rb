@@ -72,7 +72,7 @@ module PryRails
           if mod.table_exists?
             model_string << mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
           else
-            mod.to_s + "\n" + "  Table doesn't exist"
+            model_string << "  Table doesn't exist"
           end
           mod.reflections.each do |model,ref|
             model_string << "\n  #{ref.macro.to_s} #{model}"
