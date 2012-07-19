@@ -66,16 +66,27 @@ module PryRails
           show-models displays the current Rails app's models.
         USAGE
 
-        opt.on :G, "grep", "Filter output by regular expression", :argument => true
+        opt.on :G, "grep", "Color output red by regular expression", :argument => true
       end
 
       def process
         Rails.application.eager_load!
+
         models = ActiveRecord::Base.descendants.map do |mod|
-          mod.to_s + "\n" + mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
+          model_string = mod.to_s + "\n"
+          if mod.table_exists?
+            model_string << mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
+          else
+            model_string << "  Table doesn't exist"
+          end
+          mod.reflections.each do |model,ref|
+            model_string << "\n  #{ref.macro.to_s} #{model}"
+            model_string << " through #{ref.options[:through]}" unless ref.options[:through].nil?
+          end
+          model_string
         end.join("\n")
 
-        models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) }
+        models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) } unless opts[:G].nil?
 
         output.puts models
       end

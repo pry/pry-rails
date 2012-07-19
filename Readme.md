@@ -42,6 +42,34 @@ edit_pokemon GET    /pokemon/edit(.:format) pokemons#edit
 [3] pry(main)> show-routes --grep new
  new_pokemon GET    /pokemon/new(.:format)  pokemons#new
     new_beer GET    /beer/new(.:format)     beers#new
+[4] pry(main)> show-models
+Beer
+  id: integer
+  name: string
+  type: string
+  rating: integer
+  ibu: integer
+  abv: integer
+  created_at: datetime
+  updated_at: datetime
+  belongs_to hacker
+Hacker
+  id: integer
+  social_ability: integer
+  created_at: datetime
+  updated_at: datetime
+  has_many pokemons
+  has_many beers
+Pokemon
+  id: integer
+  name: string
+  caught: binary
+  species: string
+  abilities: string
+  created_at: datetime
+  updated_at: datetime
+  belongs_to hacker
+  has_many beers through hacker
 ```
 
 # Alternative
