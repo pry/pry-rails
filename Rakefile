@@ -28,7 +28,8 @@ task :init_test_app => 'appraisal:install' do
   system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rake db:migrate'
 
   # Replace generated models
-  cp_r 'test/models/', 'test/app/app/models/'
+  cd '../..'
+  cp_r 'test/models', 'test/app/app/models'
 end
 
 desc 'Start the Rails server'
