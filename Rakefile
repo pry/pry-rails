@@ -1,43 +1,32 @@
 require "rubygems"
 require "bundler/setup"
 require "bundler/gem_tasks"
+require "rake/testtask"
 require "appraisal"
 
-include FileUtils
-
-desc 'Create test Rails app'
-task :init_test_app => 'appraisal:install' do
-  # Remove and generate test app using Rails 3.0
-  rm_rf 'test/app'
-  system 'env BUNDLE_GEMFILE=gemfiles/rails30.gemfile bundle exec rails new test/app'
-
-  # Copy test routes file into place
-  cp 'test/routes.rb', 'test/app/config/routes.rb'
-
-  # Remove rjs line from environment, since it's gone in versions >= 3.1
-  env_contents = File.readlines('test/app/config/environments/development.rb')
-  File.open('test/app/config/environments/development.rb', 'w') do |f|
-    f.puts env_contents.reject { |l| l =~ /rjs/ }.join("\n")
-  end
-
-  # Generate a few models
-  cd 'test/app'
-  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Pokemon name:string caught:binary species:string abilities:string'
-  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Hacker social_ability:integer'
-  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rails g model Beer name:string type:string rating:integer ibu:integer abv:integer'
-  system 'env BUNDLE_GEMFILE=../../gemfiles/rails30.gemfile bundle exec rake db:migrate'
-
-  # Replace generated models
-  cd '../..'
-  cp_r 'test/models', 'test/app/app/models'
+Rake::TestTask.new do |t|
+  t.libs.concat %w(pry-rails spec)
+  t.pattern = "spec/*_spec.rb"
 end
 
 desc 'Start the Rails server'
-task :server do
-  exec 'cd test/app && rails server'
+task :server => :development_env do
+  require 'rails/commands/server'
+  Rails::Server.start(server: 'WEBrick', environment: 'development',
+                      Host: '0.0.0.0', Port: 3000, config: 'config/config.ru')
 end
 
 desc 'Start the Rails console'
-task :console do
-  exec 'cd test/app && rails console'
+task :console => :development_env do
+  require 'rails/commands/console'
+  Rails::Console.start(Rails.application)
 end
+
+task :development_env do
+  ENV['RAILS_ENV'] = 'development'
+  require_relative 'spec/config/environment'
+  Dir.chdir(Rails.application.root)
+end
+
+# Must invoke indirectly, using `rake appraisal`.
+task :default => [:test]
