@@ -19,6 +19,8 @@ TestApp.initialize!
 
 # Create in-memory database
 
+ActiveRecord::Migration.verbose = false
+
 ActiveRecord::Schema.define do
   create_table :pokemons do |t|
     t.string :name
