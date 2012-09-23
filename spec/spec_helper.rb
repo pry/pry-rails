@@ -9,6 +9,10 @@ end
 
 require 'config/environment'
 
+# Pry testing stuff (taken from Pry itself)
+
+Pry.color = false
+
 def redirect_pry_io(new_in, new_out = StringIO.new)
   old_in  = Pry.input
   old_out = Pry.output

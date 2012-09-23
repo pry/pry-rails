@@ -26,27 +26,29 @@ PryRails::Commands.create_command "show-models", "Show all defined models." do
     models = ActiveRecord::Base.descendants
 
     models.sort_by(&:to_s).each do |model|
-      model_string = "#{model}\n"
+      display_model_name model
 
       if model.table_exists?
         model.columns.each do |column|
-          model_string << "  #{column.name}: #{column.type.to_s}\n"
+          display_column column.name, column.type
         end
       else
-        model_string << "  Table doesn't exist\n"
+        display_error "Table doesn't exist"
       end
 
-      model.reflections.each do |model, reflection|
-        model_string << "  #{reflection.macro.to_s} #{model}"
+      model.reflections.each do |other_model, reflection|
+        options = []
 
         if reflection.options[:through].present?
-          model_string << " through #{reflection.options[:through]}\n"
-        else
-          model_string << "\n"
+          if opts.present?(:G)
+            options << "through :#{reflection.options[:through]}"
+          else
+            options << "through :#{text.blue reflection.options[:through]}"
+          end
         end
-      end
 
-      display model_string
+        display_association reflection.macro, other_model, options
+      end
     end
   end
 
@@ -68,36 +70,68 @@ PryRails::Commands.create_command "show-models", "Show all defined models." do
     end
 
     models.sort_by(&:to_s).each do |model|
-      model_string = "#{model}\n"
+      display_model_name model
 
       model.fields.values.sort_by(&:name).each do |column|
-        model_string << "  #{column.name}: #{column.options[:type]}\n"
+        display_column column.name, column.options[:type]
       end
 
       model.relations.each do |other_model, ref|
-        model_string << "  #{kind_of_relation(ref.relation)} #{other_model}"
-        model_string << ", autosave"  if ref.options[:autosave]
-        model_string << ", autobuild" if ref.options[:autobuild]
-        model_string << ", validate"  if ref.options[:validate]
+        options = []
+        options << 'autosave'  if ref.options[:autosave]
+        options << 'autobuild' if ref.options[:autobuild]
+        options << 'validate'  if ref.options[:validate]
 
         if ref.options[:dependent]
-          model_string << ", dependent-#{ref.options[:dependent]}"
+          options << "dependent-#{ref.options[:dependent]}"
         end
 
-        model_string << "\n"
+        display_association kind_of_relation(ref.relation), other_model, options
       end
+    end
+  end
 
-      display model_string
+  def display_model_name(model)
+    if opts.present?(:G)
+      display model
+    else
+      display text.bright_blue model
+    end
+  end
+
+  def display_column(name, type)
+    if opts.present?(:G)
+      display "  #{name}: #{type}"
+    else
+      display "  #{name}: #{text.green type}"
+    end
+  end
+
+  def display_association(type, other, options = [])
+    options_string = (options.any?) ? " (#{options.join(', ')})" : ''
+
+    if opts.present?(:G)
+      display "  #{type} :#{other}#{options_string}"
+    else
+      display "  #{type} #{text.blue ":#{other}"}#{options_string}"
+    end
+  end
+
+  def display_error(message)
+    if opts.present?(:G)
+      display "  #{message}"
+    else
+      display "  #{text.red message}"
     end
   end
 
   def display(string)
     if opts.present?(:G)
       regexp = Regexp.new(opts[:G], Regexp::IGNORECASE)
-      string = string.gsub(regexp) { |s| text.red(s) }
+      string = string.to_s.gsub(regexp) { |s| text.bright_red(s) }
     end
 
-    output.puts string
+    output.puts string.to_s
   end
 
   def kind_of_relation(relation)
