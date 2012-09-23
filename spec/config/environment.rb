@@ -57,3 +57,23 @@ class Pokemon < ActiveRecord::Base
   belongs_to :hacker
   has_many :beers, through: :hacker
 end
+
+begin
+  require 'mongoid'
+
+  class Artist
+    include Mongoid::Document
+
+    field :name, type: String
+    embeds_one :beer
+    embeds_many :instruments
+  end
+
+  class Instrument
+    include Mongoid::Document
+
+    field :name, type: String
+    embedded_in :artist
+  end
+rescue LoadError # Mongoid doesn't support Rails 3.0 or 4.0
+end

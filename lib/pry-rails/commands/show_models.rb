@@ -16,66 +16,78 @@ PryRails::Commands.create_command "show-models", "Show all defined models." do
   def process
     Rails.application.eager_load!
 
-    if defined?(ActiveRecord::Base)
-      models = ActiveRecord::Base.descendants
+    display_activerecord_models
+    display_mongoid_models
+  end
 
-      display(models.map do |model|
-        model_string = model.to_s + "\n"
+  def display_activerecord_models
+    return unless defined?(ActiveRecord::Base)
 
-        if model.table_exists?
-          model.columns.each do |column|
-            model_string << "  #{column.name}: #{column.type.to_s}\n"
-          end
+    models = ActiveRecord::Base.descendants
+
+    models.sort_by(&:to_s).each do |model|
+      model_string = "#{model}\n"
+
+      if model.table_exists?
+        model.columns.each do |column|
+          model_string << "  #{column.name}: #{column.type.to_s}\n"
+        end
+      else
+        model_string << "  Table doesn't exist\n"
+      end
+
+      model.reflections.each do |model, reflection|
+        model_string << "  #{reflection.macro.to_s} #{model}"
+
+        if reflection.options[:through].present?
+          model_string << " through #{reflection.options[:through]}\n"
         else
-          model_string << "  Table doesn't exist\n"
-        end
-
-        model.reflections.each do |model, reflection|
-          model_string << "  #{reflection.macro.to_s} #{model}"
-
-          if reflection.options[:through].present?
-            model_string << " through #{reflection.options[:through]}\n"
-          else
-            model_string << "\n"
-          end
-        end
-
-        model_string
-      end.join)
-    end
-
-    if defined?(Mongoid::Document)
-      models = []
-      ObjectSpace.each_object do |o|
-        if o.is_a?(Class) && o.ancestors.include?(Mongoid::Document)
-          models << o
+          model_string << "\n"
         end
       end
 
-      display(models.map do |model|
-        mod = extract_class_name(path)
-        model_string = "\033[1;34m#{mod.to_s}\033[0m\n"
-        begin
-          if mod.constantize.included_modules.include?(Mongoid::Document)
-            model_string << mod.constantize.fields.values.sort_by(&:name).map { |col|
-              "  #{col.name}: \033[1;33m#{col.options[:type].to_s.downcase}\033[0m"
-            }.join("\n")
-            mod.constantize.relations.each do |model,ref|
-              model_string << "\n  #{kind_of_relation(ref.relation.to_s)} \033[1;34m#{model}\033[0m"
-              model_string << ", autosave" if ref.options[:autosave]
-              model_string << ", autobuild" if ref.options[:autobuild]
-              model_string << ", validate" if ref.options[:validate]
-              model_string << ", dependent-#{ref.options[:dependent]}" if ref.options[:dependent]
-            end
-          else
-            model_string << "  Collection doesn't exist"
-          end
-          model_string
+      display model_string
+    end
+  end
 
-        rescue Exception
-          STDERR.puts "Warning: exception #{$!} raised while trying to load model class #{path}"
+  def display_mongoid_models
+    return unless defined?(Mongoid::Document)
+
+    models = []
+
+    ObjectSpace.each_object do |o|
+      is_model = false
+
+      begin
+        is_model = o.class == Class && o.ancestors.include?(Mongoid::Document)
+      rescue => e
+        # If it's a weird object, it's not what we want anyway.
+      end
+
+      models << o if is_model
+    end
+
+    models.sort_by(&:to_s).each do |model|
+      model_string = "#{model}\n"
+
+      model.fields.values.sort_by(&:name).each do |column|
+        model_string << "  #{column.name}: #{column.options[:type]}\n"
+      end
+
+      model.relations.each do |other_model, ref|
+        model_string << "  #{kind_of_relation(ref.relation)} #{other_model}"
+        model_string << ", autosave"  if ref.options[:autosave]
+        model_string << ", autobuild" if ref.options[:autobuild]
+        model_string << ", validate"  if ref.options[:validate]
+
+        if ref.options[:dependent]
+          model_string << ", dependent-#{ref.options[:dependent]}"
         end
-      end.join("\n"))
+
+        model_string << "\n"
+      end
+
+      display model_string
     end
   end
 
@@ -88,14 +100,14 @@ PryRails::Commands.create_command "show-models", "Show all defined models." do
     output.puts string
   end
 
-  def kind_of_relation(string)
-    case string.gsub('Mongoid::Relations::', '')
-    when 'Referenced::Many' then 'has_many'
-    when 'Referenced::One' then 'has_one'
-    when 'Referenced::In' then 'belongs_to'
-    when 'Embedded::Many' then 'embeds_many'
-    when 'Embedded::One' then 'embeds_one'
-    when 'Embedded::In' then 'embedded_in'
+  def kind_of_relation(relation)
+    case relation.to_s.sub(/^Mongoid::Relations::/, '')
+      when 'Referenced::Many' then 'has_many'
+      when 'Referenced::One'  then 'has_one'
+      when 'Referenced::In'   then 'belongs_to'
+      when 'Embedded::Many'   then 'embeds_many'
+      when 'Embedded::One'    then 'embeds_one'
+      when 'Embedded::In'     then 'embedded_in'
     end
   end
 end
