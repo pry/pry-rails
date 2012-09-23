@@ -5,7 +5,8 @@ require 'pry-rails/version'
 
 if defined?(Rails)
   require 'pry-rails/railtie'
-  require 'pry-rails/commands'
+
+  PryRails::Commands = Pry::CommandSet.new
 
   command_glob = File.expand_path('../pry-rails/commands/*.rb', __FILE__)
 
