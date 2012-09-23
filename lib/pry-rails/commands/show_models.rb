@@ -1,7 +1,8 @@
 # encoding: UTF-8
 
-PryRails::Commands.create_command "show-models", "Show all defined models." do
+PryRails::Commands.create_command "show-models" do
   group "Rails"
+  description "Show all models."
 
   def options(opt)
     opt.banner unindent <<-USAGE
