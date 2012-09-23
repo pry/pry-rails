@@ -20,5 +20,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "pry", ">= 0.9.10"
   s.add_development_dependency "appraisal"
+  s.add_development_dependency "minitest"
   s.add_development_dependency "rr"
 end

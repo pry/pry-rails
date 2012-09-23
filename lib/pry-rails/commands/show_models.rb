@@ -37,7 +37,11 @@ PryRails::Commands.create_command "show-models" do
         display_error "Table doesn't exist"
       end
 
-      model.reflections.each do |other_model, reflection|
+      reflections = model.reflections.sort_by do |other_model, reflection|
+        [reflection.macro.to_s, other_model.to_s]
+      end
+
+      reflections.each do |other_model, reflection|
         options = []
 
         if reflection.options[:through].present?

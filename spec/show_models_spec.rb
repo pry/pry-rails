@@ -18,8 +18,8 @@ Beer
 Hacker
   id: integer
   social_ability: integer
-  has_many :pokemons
   has_many :beers
+  has_many :pokemons
 Pokemon
   id: integer
   name: string

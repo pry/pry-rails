@@ -72,18 +72,19 @@ Pokemon
   has_many beers through hacker
 ```
 
-# Developing
+# Developing and Testing
 
-To initialize the dev environment for pry-rails, run
-`rake init_test_app`.
+To generate Gemfiles for Rails 3.0, 3.1, 3.2, and 4.0, run
+`rake appraisal:gemfiles appraisal:install`.
 
-To test any changes across Rails 3.0, 3.1, 3.2, and 4.0, run
-`rake appraisal console` and `rake appraisal server`.
+You can then run the tests across all four versions with `rake appraisal`.
+You can also manually run the Rails console and server with `rake
+appraisal console` and `rake appraisal server`.
 
-For a specific version of Rails, you can use `rake appraisal:rails30`,
-`rake appraisal:rails31`, `rake appraisal:rails32`, and `rake
-appraisal:rails4`.
+For a specific version of Rails, use `rake appraisal:rails30`, `rake
+appraisal:rails31`, `rake appraisal:rails32`, or `rake appraisal:rails4`.
 
 # Alternative
 
-If you want to enable pry everywhere, make sure to check out [pry everywhere](http://lucapette.com/pry/pry-everywhere/).
+If you want to enable pry everywhere, make sure to check out
+[pry everywhere](http://lucapette.com/pry/pry-everywhere/).

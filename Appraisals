@@ -18,7 +18,9 @@ end
 appraise "rails4" do
   gem "rails",
     :git => "git@github.com:rails/rails.git"
-  gem "active_record_deprecated_finders",
-    :git => "git@github.com:rails/active_record_deprecated_finders"
+  gem "activerecord-deprecated_finders",
+    :git => "git@github.com:rails/activerecord-deprecated_finders"
+  gem "journey",
+    :git => "git@github.com:rails/journey"
   gem "sqlite3"
 end
