@@ -5,11 +5,9 @@ require "rake/testtask"
 require "appraisal"
 
 if RUBY_VERSION =~ /^1.8/
-  module Appraisal
-    class File
-      def path
-        'Appraisals-1.8'
-      end
+  class Appraisal::File
+    def path
+      'Appraisals-1.8'
     end
   end
 end
