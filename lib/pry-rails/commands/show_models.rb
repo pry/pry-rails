@@ -17,21 +17,42 @@ PryRails::Commands.create_command "show-models", "Show all defined models." do
     Rails.application.eager_load!
 
     if defined?(ActiveRecord::Base)
-      models = ActiveRecord::Base.descendants.map do |mod|
-        model_string = mod.to_s + "\n"
-        if mod.table_exists?
-          model_string << mod.columns.map { |col| "  #{col.name}: #{col.type.to_s}" }.join("\n")
+      models = ActiveRecord::Base.descendants
+
+      display(models.map do |model|
+        model_string = model.to_s + "\n"
+
+        if model.table_exists?
+          model.columns.each do |column|
+            model_string << "  #{column.name}: #{column.type.to_s}\n"
+          end
         else
-          model_string << "  Table doesn't exist"
+          model_string << "  Table doesn't exist\n"
         end
-        mod.reflections.each do |model,ref|
-          model_string << "\n  #{ref.macro.to_s} #{model}"
-          model_string << " through #{ref.options[:through]}" unless ref.options[:through].nil?
+
+        model.reflections.each do |model, reflection|
+          model_string << "  #{reflection.macro.to_s} #{model}"
+
+          if reflection.options[:through].present?
+            model_string << " through #{reflection.options[:through]}\n"
+          else
+            model_string << "\n"
+          end
         end
+
         model_string
-      end.join("\n")
-    elsif defined?(Mongoid::Document)
-      models = get_files.map do |path|
+      end.join)
+    end
+
+    if defined?(Mongoid::Document)
+      models = []
+      ObjectSpace.each_object do |o|
+        if o.is_a?(Class) && o.ancestors.include?(Mongoid::Document)
+          models << o
+        end
+      end
+
+      display(models.map do |model|
         mod = extract_class_name(path)
         model_string = "\033[1;34m#{mod.to_s}\033[0m\n"
         begin
@@ -54,19 +75,17 @@ PryRails::Commands.create_command "show-models", "Show all defined models." do
         rescue Exception
           STDERR.puts "Warning: exception #{$!} raised while trying to load model class #{path}"
         end
-      end.join("\n")
+      end.join("\n"))
+    end
+  end
+
+  def display(string)
+    if opts.present?(:G)
+      regexp = Regexp.new(opts[:G], Regexp::IGNORECASE)
+      string = string.gsub(regexp) { |s| text.red(s) }
     end
 
-    models.gsub!(Regexp.new(opts[:G] || ".", Regexp::IGNORECASE)) { |s| text.red(s) } unless opts[:G].nil?
-    output.puts models
-  end
-
-  def get_files(prefix ='')
-    Dir.glob(prefix << "app/models/**/*.rb")
-  end
-
-  def extract_class_name(filename)
-    filename.split('/')[2..-1].collect { |i| i.camelize }.join('::').chomp(".rb")
+    output.puts string
   end
 
   def kind_of_relation(string)
