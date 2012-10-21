@@ -3,6 +3,9 @@
 module PryRails
   class Railtie < Rails::Railtie
     console do
+      require 'pry'
+      require 'pry-rails/commands'
+
       if Rails::VERSION::MAJOR == 3
         Rails::Console::IRB = Pry
 
@@ -24,4 +27,3 @@ module PryRails
     end
   end
 end
-
