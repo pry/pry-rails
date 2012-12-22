@@ -70,6 +70,9 @@ Pokemon
   updated_at: datetime
   belongs_to hacker
   has_many beers through hacker
+
+$ DISABLE_PRY_RAILS=1 rails console
+irb(main):001:0>
 ```
 
 # Developing and Testing
