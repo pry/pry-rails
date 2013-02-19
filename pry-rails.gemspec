@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["robin@wenglewski.de"]
   s.homepage    = "https://github.com/rweng/pry-rails"
   s.summary     = %q{Use Pry as your rails console}
+  s.license     = "MIT"
   # s.description = %q{TODO: Write a gem description}
 
   # s.rubyforge_project = "pry-rails"
