@@ -59,6 +59,6 @@ PryRails::Commands.create_command "show-routes" do
 
   def process_rails_4(all_routes)
     require 'action_dispatch/routing/inspector'
-    ActionDispatch::Routing::RoutesInspector.new.format(all_routes)
+    ActionDispatch::Routing::RoutesInspector.new(all_routes).format(ActionDispatch::Routing::ConsoleFormatter.new).split(/\n/)
   end
 end
