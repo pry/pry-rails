@@ -18,7 +18,7 @@ PryRails::Commands.create_command "show-routes" do
     Rails.application.reload_routes!
     all_routes = Rails.application.routes.routes
 
-    formatted = case Rails.version
+    formatted = case Rails.version.to_s
       when /^4/
         process_rails_4(all_routes)
       when /^3\.2/

@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
-PryRails::Commands.create_command "show-models" do
+class PryRails::ShowModels < Pry::ClassCommand
+  match "show-models"
   group "Rails"
   description "Show all models."
 
@@ -27,14 +28,15 @@ PryRails::Commands.create_command "show-models" do
     models = ActiveRecord::Base.descendants
 
     models.sort_by(&:to_s).each do |model|
-      display_model_name model
+      out = []
+      out.push format_model_name model
 
       if model.table_exists?
         model.columns.each do |column|
-          display_column column.name, column.type
+          out.push format_column column.name, column.type
         end
       else
-        display_error "Table doesn't exist"
+        out.push format_error "Table doesn't exist"
       end
 
       reflections = model.reflections.sort_by do |other_model, reflection|
@@ -45,15 +47,13 @@ PryRails::Commands.create_command "show-models" do
         options = []
 
         if reflection.options[:through].present?
-          if opts.present?(:G)
-            options << "through :#{reflection.options[:through]}"
-          else
-            options << "through :#{text.blue reflection.options[:through]}"
-          end
+          options << "through #{text.blue ":#{reflection.options[:through]}"}"
         end
 
-        display_association reflection.macro, other_model, options
+        out.push format_association reflection.macro, other_model, options
       end
+
+      print_unless_filtered out
     end
   end
 
@@ -75,10 +75,11 @@ PryRails::Commands.create_command "show-models" do
     end
 
     models.sort_by(&:to_s).each do |model|
-      display_model_name model
+      out = []
+      out.push format_model_name model
 
       model.fields.values.sort_by(&:name).each do |column|
-        display_column column.name, column.options[:type]
+        out.push format_column column.name, column.options[:type]
       end
 
       model.relations.each do |other_model, ref|
@@ -91,52 +92,50 @@ PryRails::Commands.create_command "show-models" do
           options << "dependent-#{ref.options[:dependent]}"
         end
 
-        display_association kind_of_relation(ref.relation), other_model, options
+        out.push format_association \
+          kind_of_relation(ref.relation), other_model, options
       end
+
+      print_unless_filtered out
     end
   end
 
-  def display_model_name(model)
-    if opts.present?(:G)
-      display model
-    else
-      display text.bright_blue model
-    end
+  def format_model_name(model)
+    text.bright_blue model
   end
 
-  def display_column(name, type)
-    if opts.present?(:G)
-      display "  #{name}: #{type}"
-    else
-      display "  #{name}: #{text.green type}"
-    end
+  def format_column(name, type)
+    "  #{name}: #{text.green type}"
   end
 
-  def display_association(type, other, options = [])
+  def format_association(type, other, options = [])
     options_string = (options.any?) ? " (#{options.join(', ')})" : ''
+    "  #{type} #{text.blue ":#{other}"}#{options_string}"
+  end
 
+  def format_error(message)
+    "  #{text.red message}"
+  end
+
+  def print_unless_filtered array_of_strings
+    result = array_of_strings.join("\n")
     if opts.present?(:G)
-      display "  #{type} :#{other}#{options_string}"
+      return unless result =~ grep_regex
+      result = colorize_matches(result) # :(
+    end
+    output.puts result
+  end
+
+  def colorize_matches(string)
+    if Pry.color
+      string.to_s.gsub(grep_regex) { |s| "\e[7m#{s}\e[27m" }
     else
-      display "  #{type} #{text.blue ":#{other}"}#{options_string}"
+      string
     end
   end
 
-  def display_error(message)
-    if opts.present?(:G)
-      display "  #{message}"
-    else
-      display "  #{text.red message}"
-    end
-  end
-
-  def display(string)
-    if opts.present?(:G)
-      regexp = Regexp.new(opts[:G], Regexp::IGNORECASE)
-      string = string.to_s.gsub(regexp) { |s| text.bright_red(s) }
-    end
-
-    output.puts string.to_s
+  def grep_regex
+    @grep_regex ||= Regexp.new(opts[:G], Regexp::IGNORECASE)
   end
 
   def kind_of_relation(relation)
@@ -150,3 +149,5 @@ PryRails::Commands.create_command "show-models" do
     end
   end
 end
+
+PryRails::Commands.add_command PryRails::ShowModels
