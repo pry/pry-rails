@@ -67,4 +67,11 @@ MODELS
       Pry.color = false
     end
   end
+
+  if defined?(Mongoid)
+    it "should also filter for mongoid" do
+      output = mock_pry('show-models --grep beer', 'exit-all')
+      output.must_include 'Artist'
+    end
+  end
 end
