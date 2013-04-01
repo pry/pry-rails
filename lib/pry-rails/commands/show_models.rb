@@ -27,15 +27,15 @@ PryRails::Commands.create_command "show-models" do
     models = ActiveRecord::Base.descendants
 
     models.sort_by(&:to_s).each do |model|
-      out = ''
-      out += display_model_name model
+      out = []
+      out.push format_model_name model
 
       if model.table_exists?
         model.columns.each do |column|
-          out += display_column column.name, column.type
+          out.push format_column column.name, column.type
         end
       else
-        out += display_error "Table doesn't exist"
+        out.push format_error "Table doesn't exist"
       end
 
       reflections = model.reflections.sort_by do |other_model, reflection|
@@ -53,10 +53,10 @@ PryRails::Commands.create_command "show-models" do
           end
         end
 
-        out += display_association reflection.macro, other_model, options
+        out.push format_association reflection.macro, other_model, options
       end
 
-      output.puts out unless opts.present?(:G) and out !~ grep_regex
+      print_unless_filtered out
     end
   end
 
@@ -78,11 +78,11 @@ PryRails::Commands.create_command "show-models" do
     end
 
     models.sort_by(&:to_s).each do |model|
-      out = ""
-      out += display_model_name model
+      out = []
+      out.push format_model_name model
 
       model.fields.values.sort_by(&:name).each do |column|
-        out += display_column column.name, column.options[:type]
+        out.push format_column column.name, column.options[:type]
       end
 
       model.relations.each do |other_model, ref|
@@ -95,53 +95,55 @@ PryRails::Commands.create_command "show-models" do
           options << "dependent-#{ref.options[:dependent]}"
         end
 
-        out += display_association \
+        out.push format_association \
           kind_of_relation(ref.relation), other_model, options
       end
 
-      output.puts out unless opts.present?(:G) and out !~ grep_regex
+      print_unless_filtered out
     end
   end
 
-  def display_model_name(model)
+  def format_model_name(model)
     if opts.present?(:G)
-      display model
+      colorize_matches model
     else
-      display text.bright_blue model
+      text.bright_blue model
     end
   end
 
-  def display_column(name, type)
+  def format_column(name, type)
     if opts.present?(:G)
-      display "  #{name}: #{type}"
+      colorize_matches "  #{name}: #{type}"
     else
-      display "  #{name}: #{text.green type}"
+      "  #{name}: #{text.green type}"
     end
   end
 
-  def display_association(type, other, options = [])
+  def format_association(type, other, options = [])
     options_string = (options.any?) ? " (#{options.join(', ')})" : ''
 
     if opts.present?(:G)
-      display "  #{type} :#{other}#{options_string}"
+      colorize_matches "  #{type} :#{other}#{options_string}"
     else
-      display "  #{type} #{text.blue ":#{other}"}#{options_string}"
+      "  #{type} #{text.blue ":#{other}"}#{options_string}"
     end
   end
 
-  def display_error(message)
+  def format_error(message)
     if opts.present?(:G)
-      display "  #{message}"
+      colorize_matches "  #{message}"
     else
-      display "  #{text.red message}"
+      "  #{text.red message}"
     end
   end
 
-  def display(string)
-    if opts.present?(:G)
-      string = string.to_s.gsub(grep_regex) { |s| text.bright_red(s) }
-    end
-    "#{string}\n"
+  def print_unless_filtered array_of_strings
+    return if opts.present?(:G) and array_of_strings.grep(grep_regex).none?
+    output.puts array_of_strings.join("\n")
+  end
+
+  def colorize_matches(string)
+    string.to_s.gsub(grep_regex) { |s| text.bright_red(s) }
   end
 
   def grep_regex
