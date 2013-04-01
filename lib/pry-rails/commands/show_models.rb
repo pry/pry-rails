@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
-PryRails::Commands.create_command "show-models" do
+class PryRails::ShowModels < Pry::ClassCommand
+  match "show-models"
   group "Rails"
   description "Show all models."
 
@@ -161,3 +162,5 @@ PryRails::Commands.create_command "show-models" do
     end
   end
 end
+
+PryRails::Commands.add_command PryRails::ShowModels
