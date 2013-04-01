@@ -47,11 +47,7 @@ class PryRails::ShowModels < Pry::ClassCommand
         options = []
 
         if reflection.options[:through].present?
-          if opts.present?(:G)
-            options << "through :#{reflection.options[:through]}"
-          else
-            options << "through :#{text.blue reflection.options[:through]}"
-          end
+          options << "through #{text.blue ":#{reflection.options[:through]}"}"
         end
 
         out.push format_association reflection.macro, other_model, options
@@ -105,46 +101,37 @@ class PryRails::ShowModels < Pry::ClassCommand
   end
 
   def format_model_name(model)
-    if opts.present?(:G)
-      colorize_matches model
-    else
-      text.bright_blue model
-    end
+    text.bright_blue model
   end
 
   def format_column(name, type)
-    if opts.present?(:G)
-      colorize_matches "  #{name}: #{type}"
-    else
-      "  #{name}: #{text.green type}"
-    end
+    "  #{name}: #{text.green type}"
   end
 
   def format_association(type, other, options = [])
     options_string = (options.any?) ? " (#{options.join(', ')})" : ''
-
-    if opts.present?(:G)
-      colorize_matches "  #{type} :#{other}#{options_string}"
-    else
-      "  #{type} #{text.blue ":#{other}"}#{options_string}"
-    end
+    "  #{type} #{text.blue ":#{other}"}#{options_string}"
   end
 
   def format_error(message)
-    if opts.present?(:G)
-      colorize_matches "  #{message}"
-    else
-      "  #{text.red message}"
-    end
+    "  #{text.red message}"
   end
 
   def print_unless_filtered array_of_strings
-    return if opts.present?(:G) and array_of_strings.grep(grep_regex).none?
-    output.puts array_of_strings.join("\n")
+    result = array_of_strings.join("\n")
+    if opts.present?(:G)
+      return unless result =~ grep_regex
+      result = colorize_matches(result) # :(
+    end
+    output.puts result
   end
 
   def colorize_matches(string)
-    string.to_s.gsub(grep_regex) { |s| text.bright_red(s) }
+    if Pry.color
+      string.to_s.gsub(grep_regex) { |s| "\e[7m#{s}\e[27m" }
+    else
+      string
+    end
   end
 
   def grep_regex
