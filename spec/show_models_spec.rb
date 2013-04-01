@@ -33,18 +33,17 @@ MODELS
     mongoid_models = <<MODELS
 Artist
   _id: Moped::BSON::ObjectId
-  _type: String
   name: String
   embeds_one :beer (validate)
   embeds_many :instruments (validate)
 Instrument
   _id: Moped::BSON::ObjectId
-  _type: String
   name: String
   embedded_in :artist
 MODELS
 
     if defined?(Mongoid)
+      output.gsub! /^ *_type: String\n/, '' # mongoid 3.0 and 3.1 differ on this
       output.must_equal [ar_models, mongoid_models].join
     else
       output.must_equal ar_models
