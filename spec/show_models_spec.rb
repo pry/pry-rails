@@ -54,13 +54,14 @@ MODELS
     begin
       Pry.color = true
 
-      output = mock_pry('show-models --grep beer', 'exit-all')
+      output = mock_pry('show-models --grep rating', 'exit-all')
 
-      output.must_include "\e[1;31mBeer\e[0m"
-      output.must_include "has_many :\e[1;31mbeer\e[0ms (through :hacker)"
+      output.must_include "Beer"
+      output.must_include "\e[1;31mrating\e[0m"
+      output.wont_include "Pokemon"
 
       if defined?(Mongoid)
-        output.must_include "embeds_one :\e[1;31mbeer\e[0m"
+        output.wont_include "Artist"
       end
     ensure
       Pry.color = false

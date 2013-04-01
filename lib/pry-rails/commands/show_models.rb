@@ -27,14 +27,15 @@ PryRails::Commands.create_command "show-models" do
     models = ActiveRecord::Base.descendants
 
     models.sort_by(&:to_s).each do |model|
-      display_model_name model
+      out = ''
+      out += display_model_name model
 
       if model.table_exists?
         model.columns.each do |column|
-          display_column column.name, column.type
+          out += display_column column.name, column.type
         end
       else
-        display_error "Table doesn't exist"
+        out += display_error "Table doesn't exist"
       end
 
       reflections = model.reflections.sort_by do |other_model, reflection|
@@ -52,8 +53,10 @@ PryRails::Commands.create_command "show-models" do
           end
         end
 
-        display_association reflection.macro, other_model, options
+        out += display_association reflection.macro, other_model, options
       end
+
+      output.puts out unless opts.present?(:G) and out !~ grep_regex
     end
   end
 
@@ -75,10 +78,11 @@ PryRails::Commands.create_command "show-models" do
     end
 
     models.sort_by(&:to_s).each do |model|
-      display_model_name model
+      out = ""
+      out += display_model_name model
 
       model.fields.values.sort_by(&:name).each do |column|
-        display_column column.name, column.options[:type]
+        out += display_column column.name, column.options[:type]
       end
 
       model.relations.each do |other_model, ref|
@@ -91,8 +95,11 @@ PryRails::Commands.create_command "show-models" do
           options << "dependent-#{ref.options[:dependent]}"
         end
 
-        display_association kind_of_relation(ref.relation), other_model, options
+        out += display_association \
+          kind_of_relation(ref.relation), other_model, options
       end
+
+      output.puts out unless opts.present?(:G) and out !~ grep_regex
     end
   end
 
@@ -132,11 +139,13 @@ PryRails::Commands.create_command "show-models" do
 
   def display(string)
     if opts.present?(:G)
-      regexp = Regexp.new(opts[:G], Regexp::IGNORECASE)
-      string = string.to_s.gsub(regexp) { |s| text.bright_red(s) }
+      string = string.to_s.gsub(grep_regex) { |s| text.bright_red(s) }
     end
+    "#{string}\n"
+  end
 
-    output.puts string.to_s
+  def grep_regex
+    @grep_regex ||= Regexp.new(opts[:G], Regexp::IGNORECASE)
   end
 
   def kind_of_relation(relation)
