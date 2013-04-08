@@ -12,7 +12,7 @@ class PryRails::ShowModels < Pry::ClassCommand
       show-models displays the current Rails app's models.
     USAGE
 
-    opt.on :G, "grep", "Color output red by regular expression", :argument => true
+    opt.on :G, "grep", "Filter output by regular expression", :argument => true
   end
 
   def process
