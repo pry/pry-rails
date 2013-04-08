@@ -57,7 +57,7 @@ MODELS
       output = mock_pry('show-models --grep rating', 'exit-all')
 
       output.must_include "Beer"
-      output.must_include "\e[1;31mrating\e[0m"
+      output.must_include "\e[7mrating\e[27m"
       output.wont_include "Pokemon"
 
       if defined?(Mongoid)
