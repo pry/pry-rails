@@ -2,13 +2,13 @@
 
 PryRails::Commands.create_command "recognize-path" do
   group "Rails"
-  description "Verify that a URL is mapped to the right controller and action"
+  description "See which route matches a URL."
 
   def options(opt)
     opt.banner unindent <<-USAGE
-      Usage: recognize-path PATH [-m|--method METHOD]
+      Usage: recognize-path <path> [-m|--method METHOD]
 
-      Verifies that a given PATH is mapped to the right controller and action.
+      Verifies that a given path is mapped to the right controller and action.
 
       recognize-path example.com
       recognize-path example.com -m post
