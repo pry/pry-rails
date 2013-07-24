@@ -4,4 +4,4 @@ Gemfile.lock
 pkg/*
 spec/log
 spec/tmp
-gemfiles
+gemfiles/*.lock
