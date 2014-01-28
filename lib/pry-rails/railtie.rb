@@ -5,7 +5,6 @@ module PryRails
     console do
       require 'pry'
       require 'pry-rails/commands'
-      require 'pry-rails/model_formatter'
 
       if Rails::VERSION::MAJOR == 3
         Rails::Console::IRB = Pry
