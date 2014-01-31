@@ -25,6 +25,14 @@ module PryRails
           options << "through #{text.blue ":#{reflection.options[:through]}"}"
         end
 
+        if reflection.options[:class_name].present?
+          options << "class_name #{text.green ":#{reflection.options[:class_name]}"}"
+        end
+
+        if reflection.options[:foreign_key].present?
+          options << "foreign_key #{text.red ":#{reflection.options[:foreign_key]}"}"
+        end
+
         out.push format_association reflection.macro, other_model, options
       end
 
