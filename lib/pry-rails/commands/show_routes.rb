@@ -6,12 +6,13 @@ PryRails::Commands.create_command "show-routes" do
 
   def options(opt)
     opt.banner unindent <<-USAGE
-      Usage: show-routes [-G]
+      Usage: show-routes [-G] [-T]
 
       show-routes displays the current Rails app's routes.
     USAGE
 
     opt.on :G, "grep", "Filter output by regular expression", :argument => true
+    opt.on :T, "take", "take the first X matches", :argument => true
   end
 
   def process
@@ -27,7 +28,8 @@ PryRails::Commands.create_command "show-routes" do
         process_rails_3_0_and_3_1(all_routes)
       end
 
-    output.puts formatted.grep(Regexp.new(opts[:G] || ".")).join("\n")
+    upto = opts[:T].to_i || 0
+    output.puts formatted.grep(Regexp.new(opts[:G] || "."))[0..upto-1].join("\n")
   end
 
   # Cribbed from https://github.com/rails/rails/blob/3-1-stable/railties/lib/rails/tasks/routes.rake
