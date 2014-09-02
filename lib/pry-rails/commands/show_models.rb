@@ -44,7 +44,7 @@ class PryRails::ShowModels < Pry::ClassCommand
 
       begin
         is_model = o.class == Class && o.ancestors.include?(Mongoid::Document)
-      rescue => e
+      rescue
         # If it's a weird object, it's not what we want anyway.
       end
 
