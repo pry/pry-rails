@@ -2,8 +2,8 @@
 
 source "http://rubygems.org"
 
-gem "rails", "3.2.14"
+gem "rails", "3.2.21"
 gem "mongoid"
 gem "sqlite3"
 
-gemspec :path=>"../"
+gemspec :path => "../"

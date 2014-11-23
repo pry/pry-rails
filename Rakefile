@@ -4,14 +4,6 @@ require "bundler/gem_tasks"
 require "rake/testtask"
 require "appraisal"
 
-if RUBY_VERSION =~ /^1.8/
-  class Appraisal::File
-    def path
-      'Appraisals-1.8'
-    end
-  end
-end
-
 Rake::TestTask.new do |t|
   t.libs.concat %w(pry-rails spec)
   t.pattern = "spec/*_spec.rb"

@@ -29,13 +29,14 @@ MODEL
 
       expected = <<MODEL
 Artist
-  _id: Moped::BSON::ObjectId
+  _id: BSON::ObjectId
   name: String
   embeds_one :beer (validate)
   embeds_many :instruments (validate)
 MODEL
 
       output.gsub! /^ *_type: String\n/, '' # mongoid 3.0 and 3.1 differ on this
+      output.gsub! /Moped::BSON/, 'BSON'    # mongoid 3 and 4 differ on this
       output.must_equal expected
     end
   end

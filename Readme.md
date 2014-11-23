@@ -77,15 +77,15 @@ irb(main):001:0>
 
 # Developing and Testing
 
-To generate Gemfiles for Rails 3.0, 3.1, 3.2, and 4.0, run
-`rake appraisal:gemfiles appraisal:install`.
+To generate Gemfiles for Rails 3.0, 3.1, 3.2, 4.0, 4.1, and 4.2, run `rake
+appraisal:gemfiles appraisal:install`.
 
-You can then run the tests across all four versions with `rake appraisal`.
-You can also manually run the Rails console and server with `rake
-appraisal console` and `rake appraisal server`.
+You can then run the tests across all four versions with `rake appraisal`.  You
+can also manually run the Rails console and server with `rake appraisal
+console` and `rake appraisal server`.
 
 For a specific version of Rails, use `rake appraisal:rails30`, `rake
-appraisal:rails31`, `rake appraisal:rails32`, or `rake appraisal:rails4`.
+appraisal:rails31`, `rake appraisal:rails32`, etc.
 
 # Alternative
 

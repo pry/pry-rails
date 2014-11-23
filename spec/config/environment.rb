@@ -75,5 +75,5 @@ begin
     field :name, :type => String
     embedded_in :artist
   end
-rescue LoadError # Mongoid doesn't support Rails 3.0 or 4.0 or Ruby 1.8
+rescue LoadError # Mongoid doesn't support Rails 3.0
 end
