@@ -2,6 +2,7 @@ class PryRails::RecognizePath < Pry::ClassCommand
   match 'recognize-path'
   group 'Rails'
   description 'See which route matches a URL.'
+  command_options argument_required: true
   banner <<-BANNER
     Usage: recognize-path <path> [-m|--method METHOD]
 
