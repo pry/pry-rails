@@ -20,6 +20,12 @@ describe "recognize-path" do
     }
   end
 
+  it 'fails gracefully if no path is given' do
+    output = mock_pry('recognize-path', 'exit-all')
+    output.must_equal \
+      "Error: The command 'recognize-path' requires an argument.\n"
+  end
+
   it "prints info about controller/action that is bound to the given path" do
     output = mock_pry('recognize-path example.com', 'exit-all')
     output.must_match /controller.+foo/
