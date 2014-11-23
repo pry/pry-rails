@@ -1,16 +1,13 @@
-# encoding: UTF-8
-
-PryRails::Commands.create_command "show-routes" do
-  group "Rails"
-  description "Show all routes in match order."
+class PryRails::ShowRoutes < Pry::ClassCommand
+  match 'show-routes'
+  group 'Rails'
+  description 'Show all routes in match order.'
+  banner <<-BANNER
+    Usage: show-routes [-G]
+    show-routes displays the current Rails app's routes.
+  BANNER
 
   def options(opt)
-    opt.banner unindent <<-USAGE
-      Usage: show-routes [-G]
-
-      show-routes displays the current Rails app's routes.
-    USAGE
-
     opt.on :G, "grep", "Filter output by regular expression", :argument => true
   end
 
@@ -61,4 +58,6 @@ PryRails::Commands.create_command "show-routes" do
     require 'action_dispatch/routing/inspector'
     ActionDispatch::Routing::RoutesInspector.new(all_routes).format(ActionDispatch::Routing::ConsoleFormatter.new).split(/\n/)
   end
+
+  PryRails::Commands.add_command(self)
 end

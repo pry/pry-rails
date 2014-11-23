@@ -1,28 +1,26 @@
-# encoding: UTF-8
+class PryRails::RecognizePath < Pry::ClassCommand
+  match 'recognize-path'
+  group 'Rails'
+  description 'See which route matches a URL.'
+  banner <<-BANNER
+    Usage: recognize-path <path> [-m|--method METHOD]
 
-PryRails::Commands.create_command "recognize-path" do
-  group "Rails"
-  description "See which route matches a URL."
+    Verifies that a given path is mapped to the right controller and action.
+
+    recognize-path example.com
+    recognize-path example.com -m post
+  BANNER
 
   def options(opt)
-    opt.banner unindent <<-USAGE
-      Usage: recognize-path <path> [-m|--method METHOD]
-
-      Verifies that a given path is mapped to the right controller and action.
-
-      recognize-path example.com
-      recognize-path example.com -m post
-    USAGE
-
     opt.on :m, :method, "Methods", :argument => true
   end
 
-  def process
+  def process(path)
     method = (opts.m? ? opts[:m] : :get)
     routes = Rails.application.routes
 
     begin
-      info = routes.recognize_path("http://#{args.first}", :method => method)
+      info = routes.recognize_path("http://#{path}", :method => method)
     rescue ActionController::UnknownHttpMethod
       output.puts "Unknown HTTP method: #{method}"
     rescue ActionController::RoutingError => e
@@ -31,4 +29,6 @@ PryRails::Commands.create_command "recognize-path" do
 
     output.puts Pry::Helpers::BaseHelpers.colorize_code(info)
   end
+
+  PryRails::Commands.add_command(self)
 end

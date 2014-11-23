@@ -1,20 +1,18 @@
-# encoding: UTF-8
+class PryRails::ShowMiddleware < Pry::ClassCommand
+  match 'show-middleware'
+  group 'Rails'
+  description 'Show all middleware (that Rails knows about).'
+  banner <<-BANNER
+    Usage: show-middleware [-G]
 
-PryRails::Commands.create_command "show-middleware" do
-  group "Rails"
-  description "Show all middleware (that Rails knows about)."
+    show-middleware shows the Rails app's middleware.
+
+    If this pry REPL is attached to a Rails server, the entire middleware
+    stack is displayed.  Otherwise, only the middleware Rails knows about is
+    printed.
+  BANNER
 
   def options(opt)
-    opt.banner unindent <<-USAGE
-      Usage: show-middleware [-G]
-
-      show-middleware shows the Rails app's middleware.
-
-      If this pry REPL is attached to a Rails server, the entire middleware
-      stack is displayed.  Otherwise, only the middleware Rails knows about is
-      printed.
-    USAGE
-
     opt.on :G, "grep", "Filter output by regular expression", :argument => true
   end
 
@@ -64,4 +62,6 @@ PryRails::Commands.create_command "show-middleware" do
       output.puts string
     end
   end
+
+  PryRails::Commands.add_command(self)
 end
