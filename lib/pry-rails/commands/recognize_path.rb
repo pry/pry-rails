@@ -3,6 +3,7 @@
 PryRails::Commands.create_command "recognize-path" do
   group "Rails"
   description "See which route matches a URL."
+  command_options argument_required: true
 
   def options(opt)
     opt.banner unindent <<-USAGE
