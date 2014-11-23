@@ -1,5 +1,3 @@
-[![Build Status](https://img.shields.io/travis/rweng/pry-rails.svg)](https://travis-ci.org/rweng/pry-rails)
-
 # Description
 
 Avoid repeating yourself, use pry-rails instead of copying the initializer to every rails project.
