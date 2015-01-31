@@ -57,7 +57,7 @@ class PryRails::FindRoute < Pry::ClassCommand
         output.puts "Routes for " + text.bold(controller.camelize + "Controller")
         output.puts "--"
         routes.each do |route|
-          output.puts "#{text.bold(verb_for(route))} #{route.defaults[:action]} #{route.path.spec}"
+          output.puts "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{route.path.spec}"
         end
         output.puts
       end
