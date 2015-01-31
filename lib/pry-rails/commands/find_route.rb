@@ -25,8 +25,8 @@ class PryRails::FindRoute < Pry::ClassCommand
 
   def single_action(controller)
     controller_action_pair = controller_and_action_from(controller)
-    route = routes.find { |route| route.defaults == controller_action_pair }
-    show_routes(Array(route))
+    route = routes.select { |route| route.defaults == controller_action_pair }
+    show_routes(route)
   end
 
   def all_actions(controller)
