@@ -37,8 +37,8 @@ class PryRails::FindRoute < Pry::ClassCommand
     show_routes(all_routes)
   end
 
-  def controller_and_action_from(method_name)
-    controller, action = method_name.split("#")
+  def controller_and_action_from(controller_and_action)
+    controller, action = controller_and_action.split("#")
     {controller: normalize_controller_name(controller), action: action}
   end
 
