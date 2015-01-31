@@ -53,14 +53,15 @@ class PryRails::FindRoute < Pry::ClassCommand
   def show_routes(all_routes)
     if all_routes.any?
       grouped_routes = all_routes.group_by { |route| route.defaults[:controller] }
-      grouped_routes.each do |controller, routes|
-        output.puts "Routes for " + text.bold(controller.camelize + "Controller")
-        output.puts "--"
+      result = grouped_routes.each_with_object("") do |(controller, routes), result|
+        result << "Routes for " + text.bold(controller.camelize + "Controller") + "\n"
+        result << "--\n"
         routes.each do |route|
-          output.puts "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{route.path.spec}"
+          result << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{route.path.spec}" + "\n"
         end
-        output.puts
+        result << "\n"
       end
+      _pry_.pager.page result
     else
       output.puts "No routes found."
     end
