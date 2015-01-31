@@ -77,3 +77,5 @@ class PryRails::FindRoute < Pry::ClassCommand
 
   PryRails::Commands.add_command(self)
 end
+
+PryRails::Commands.alias_command "find-routes", "find-route"
