@@ -24,17 +24,13 @@ class PryRails::FindRoute < Pry::ClassCommand
   private
 
   def single_action(controller)
-    controller_action_pair = controller_and_action_from(controller)
-    route = routes.select { |route| route.defaults == controller_action_pair }
-    show_routes(route)
+    show_routes { |route| route.defaults == controller_and_action_from(controller) }
   end
 
   def all_actions(controller)
-    all_routes = routes.select do |route|
+    show_routes do |route|
       route.defaults[:controller].to_s.starts_with?(normalize_controller_name(controller))
     end
-
-    show_routes(all_routes)
   end
 
   def controller_and_action_from(controller_and_action)
@@ -50,7 +46,8 @@ class PryRails::FindRoute < Pry::ClassCommand
     controller.underscore.chomp('_controller')
   end
 
-  def show_routes(all_routes)
+  def show_routes(&block)
+    all_routes = routes.select(&block)
     if all_routes.any?
       grouped_routes = all_routes.group_by { |route| route.defaults[:controller] }
       result = grouped_routes.each_with_object("") do |(controller, routes), result|
