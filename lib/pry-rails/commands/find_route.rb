@@ -54,7 +54,8 @@ class PryRails::FindRoute < Pry::ClassCommand
         result << "Routes for " + text.bold(controller.camelize + "Controller") + "\n"
         result << "--\n"
         routes.each do |route|
-          result << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{route.path.spec}" + "\n"
+          spec = route.path.is_a?(String) ? route.path : route.path.spec
+          result << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{spec}" + "\n"
         end
         result << "\n"
       end
@@ -65,7 +66,7 @@ class PryRails::FindRoute < Pry::ClassCommand
   end
 
   def verb_for(route)
-    %w(GET PUT POST PATCH DELETE).find { |v| route.verb =~ v }
+    %w(GET PUT POST PATCH DELETE).find { |v| route.verb === v }
   end
 
   def single_action?(controller)
