@@ -32,3 +32,9 @@ appraise "rails42" do
   gem "mongoid"
   gem "sqlite3"
 end
+
+appraise "rails50" do
+  gem "rails", github: "rails/rails"
+  gem 'arel', github: "rails/arel"
+  gem "sqlite3"
+end

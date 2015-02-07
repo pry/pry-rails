@@ -16,8 +16,8 @@ class PryRails::ShowRoutes < Pry::ClassCommand
     all_routes = Rails.application.routes.routes
 
     formatted = case Rails.version.to_s
-      when /^4/
-        process_rails_4(all_routes)
+      when /^[45]/
+        process_rails_4_and_5(all_routes)
       when /^3\.2/
         process_rails_3_2(all_routes)
       else
@@ -54,7 +54,7 @@ class PryRails::ShowRoutes < Pry::ClassCommand
     Rails::Application::RouteInspector.new.format(all_routes)
   end
 
-  def process_rails_4(all_routes)
+  def process_rails_4_and_5(all_routes)
     require 'action_dispatch/routing/inspector'
     ActionDispatch::Routing::RoutesInspector.new(all_routes).format(ActionDispatch::Routing::ConsoleFormatter.new).split(/\n/)
   end
