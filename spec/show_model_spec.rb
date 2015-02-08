@@ -3,9 +3,6 @@
 require 'spec_helper'
 
 describe "show-models" do
-  before { Pry.color = false }
-  after  { Pry.color = true  }
-
   it "should print one ActiveRecord model" do
     output = mock_pry('show-model Beer', 'exit-all')
 

@@ -4,7 +4,6 @@ require 'spec_helper'
 
 describe "find-route" do
   before do
-    Pry.color = false
     routes = Rails.application.routes
     routes.draw {
       namespace :admin do

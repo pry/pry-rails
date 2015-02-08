@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe "show-models" do
   it "should print a list of models" do
-    output = mock_pry('Pry.color = false;', 'show-models', 'exit-all')
+    output = mock_pry('show-models', 'exit-all')
 
     ar_models = <<MODELS
 Beer
