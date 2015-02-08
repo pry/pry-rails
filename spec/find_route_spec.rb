@@ -26,7 +26,7 @@ describe "find-route" do
     output.must_match /show GET/
     output.must_match /new GET/
     output.must_match /edit GET/
-    output.must_match /update PATCH/
+    output.must_match /update (PATCH|PUT)/
     output.must_match /update PUT/
     output.must_match /destroy DELETE/
   end
