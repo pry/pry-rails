@@ -2,7 +2,6 @@ class PryRails::FindRoute < Pry::ClassCommand
   match 'find-route'
   group 'Rails'
   description 'See which URLs match a given Controller.'
-  command_options argument_required: true
   banner <<-BANNER
     Usage: find-route <controller>
 
@@ -11,13 +10,15 @@ class PryRails::FindRoute < Pry::ClassCommand
     find-route MyController#show  #=> The URL that matches the MyController show action
     find-route MyController       #=> All the URLs that hit MyController
     find-route Admin              #=> All the URLs that hit the Admin namespace
+    find-route Com                #=> All the URLS whose controller regex matches /Comm/, e.g CommentsController
   BANNER
 
   def process(controller)
-    if single_action?(controller)
-      single_action(controller)
+    controller_string = controller.to_s
+    if single_action?(controller_string)
+      single_action(controller_string)
     else
-      all_actions(controller)
+      all_actions(controller_string)
     end
   end
 
@@ -29,7 +30,7 @@ class PryRails::FindRoute < Pry::ClassCommand
 
   def all_actions(controller)
     show_routes do |route|
-      route.defaults[:controller].to_s.starts_with?(normalize_controller_name(controller))
+      route.defaults[:controller].to_s =~ /#{normalize_controller_name(controller)}/
     end
   end
 
@@ -51,11 +52,11 @@ class PryRails::FindRoute < Pry::ClassCommand
     if all_routes.any?
       grouped_routes = all_routes.group_by { |route| route.defaults[:controller] }
       result = grouped_routes.each_with_object("") do |(controller, routes), result|
-        result << "Routes for " + text.bold(controller.camelize + "Controller") + "\n"
+        result << "Routes for " + text.bold(controller.to_s.camelize + "Controller") + "\n"
         result << "--\n"
         routes.each do |route|
           spec = route.path.is_a?(String) ? route.path : route.path.spec
-          result << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{spec}" + "\n"
+          result << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{spec}  #{route_helper(route.name)}" + "\n"
         end
         result << "\n"
       end
@@ -63,6 +64,10 @@ class PryRails::FindRoute < Pry::ClassCommand
     else
       output.puts "No routes found."
     end
+  end
+
+  def route_helper(name)
+    name && "[#{name}]"
   end
 
   def verb_for(route)
