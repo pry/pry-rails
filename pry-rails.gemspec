@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/rweng/pry-rails"
   s.summary     = %q{Use Pry as your rails console}
   s.license     = "MIT"
+  s.required_ruby_version = ">= 1.9.1"
   # s.description = %q{TODO: Write a gem description}
 
   # s.rubyforge_project = "pry-rails"
