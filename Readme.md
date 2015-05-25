@@ -6,6 +6,7 @@ This is a small gem which causes `rails console` to open [pry](http://pry.github
 # Prerequisites
 
 - A Rails >= 3.0 Application
+- Ruby >= 1.9
 
 # Installation
 
