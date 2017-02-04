@@ -18,12 +18,20 @@ module PryRails
     end
   end
 
-  RAILS_PROMPT = proc do |target_self, nest_level, pry|
-    "[#{pry.input_array.size}] " \
-      "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
-      "#{Pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
-      "#{":#{nest_level}" unless nest_level.zero?}> "
-  end
+  RAILS_PROMPT = [
+    proc do |target_self, nest_level, pry|
+      "[#{pry.input_array.size}] " \
+        "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
+        "#{Pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
+        "#{":#{nest_level}" unless nest_level.zero?}> "
+    end,
+    proc do |target_self, nest_level, pry|
+      "[#{pry.input_array.size}] " \
+        "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
+        "#{Pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
+        "#{":#{nest_level}" unless nest_level.zero?}* "
+    end
+  ]
 
   Pry::Prompt::MAP["rails"] = {
     value: RAILS_PROMPT,
