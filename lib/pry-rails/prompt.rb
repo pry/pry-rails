@@ -39,5 +39,3 @@ module PryRails
                  "[1] [project_name][Rails.env] pry(main)>"
   }
 end
-
-Pry.config.prompt = PryRails::RAILS_PROMPT
