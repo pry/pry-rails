@@ -76,6 +76,16 @@ $ DISABLE_PRY_RAILS=1 rails console
 irb(main):001:0>
 ```
 
+## Custom Rails prompt
+
+If you want to include the current Rails environment and project name in the pry prompt, put the following lines in your project's `.pryrc`:
+
+```ruby
+if defined?(PryRails::RAILS_PROMPT)
+  Pry.config.prompt = PryRails::RAILS_PROMPT
+end
+```
+
 # Developing and Testing
 
 To generate Gemfiles for Rails 3.0, 3.1, 3.2, 4.0, 4.1, and 4.2, run `rake
