@@ -97,8 +97,3 @@ console` and `rake appraisal server`.
 
 For a specific version of Rails, use `rake appraisal:rails30`, `rake
 appraisal:rails31`, `rake appraisal:rails32`, etc.
-
-# Alternative
-
-If you want to enable pry everywhere, make sure to check out
-[pry everywhere](http://lucapette.me/pry-everywhere/).
