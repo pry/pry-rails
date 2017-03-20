@@ -101,4 +101,4 @@ appraisal:rails31`, `rake appraisal:rails32`, etc.
 # Alternative
 
 If you want to enable pry everywhere, make sure to check out
-[pry everywhere](http://lucapette.me/pry-everywhere/).
+[pry everywhere](http://lucapette.me/pry-everywhere).
