@@ -8,7 +8,9 @@ class PryRails::ShowRoutes < Pry::ClassCommand
   BANNER
 
   def options(opt)
-    opt.on :G, "grep", "Filter output by regular expression", :argument => true
+    opt.on :G, "grep", "Filter output by regular expression",
+           :argument => true,
+           :as => Array
   end
 
   def process
@@ -24,7 +26,29 @@ class PryRails::ShowRoutes < Pry::ClassCommand
         process_rails_3_0_and_3_1(all_routes)
       end
 
-    output.puts formatted.grep(Regexp.new(opts[:G] || ".")).join("\n")
+    output.puts grep_routes(formatted).join("\n")
+  end
+
+  # This method allows multiple grep conditions, like a pipe operator in unix
+  # Input show-routes -G admin -G post
+  # Output admin_post GET /admin/posts/:id(.:format)     admin/posts#show
+
+  # Params
+
+  # formatted
+  # ["          Prefix Verb   URI Pattern                       Controller#Action",
+  #  "             root GET    /                                 blog/posts#index",
+  #  "             post GET    /post(.:format)                   blog/posts#post",
+  #  "             admin_post GET /admin/posts/:id(.:format)     admin/posts#show
+  # ]
+
+  def grep_routes(formatted)
+    return formatted unless opts[:G]
+    grep_opts = opts[:G]
+
+    grep_opts.reduce(formatted) do |grep_opt|
+      formatted.grep(Regexp.new(grep_opt))
+    end
   end
 
   # Cribbed from https://github.com/rails/rails/blob/3-1-stable/railties/lib/rails/tasks/routes.rake
