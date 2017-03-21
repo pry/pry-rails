@@ -12,4 +12,16 @@ describe "show-routes" do
 
     output.must_match %r{^edit_pokemon GET    /pokemon/edit}
   end
+
+  it "should print a list of routes which include grep option" do
+    output = mock_pry('show-routes -G edit', 'exit-all')
+
+    output.must_match %r{^edit_pokemon GET    /pokemon/edit}
+  end
+
+  it "should print a list of routes which include grep option" do
+    output = mock_pry('show-routes -G edit -G pokemon', 'exit-all')
+
+    output.must_match %r{^edit_pokemon GET    /pokemon/edit}
+  end
 end
