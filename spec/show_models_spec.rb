@@ -42,13 +42,27 @@ Instrument
   embedded_in :artist
 MODELS
 
+    internal_models = <<MODELS
+ActiveRecord::InternalMetadata
+  key: string
+  value: string
+  created_at: datetime
+  updated_at: datetime
+MODELS
+
+    expected_output = ar_models
+
     if defined?(Mongoid)
-      output.gsub! /^ *_type: String\n/, '' # mongoid 3.0 and 3.1 differ on this
-      output.gsub! /Moped::BSON/, 'BSON'    # mongoid 3 and 4 differ on this
-      output.must_equal [ar_models, mongoid_models].join
-    else
-      output.must_equal ar_models
+      output.gsub!(/^ *_type: String\n/, '') # mongoid 3.0 and 3.1 differ on this
+      output.gsub!(/Moped::BSON/, 'BSON')    # mongoid 3 and 4 differ on this
+      expected_output += mongoid_models
     end
+
+    if Rails.version.to_s =~ /^5/
+      expected_output = internal_models + expected_output
+    end
+
+    output.must_equal expected_output
   end
 
   it "should highlight the given phrase with --grep" do
