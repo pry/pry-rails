@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe "show-models" do
+describe "show-model" do
   it "should print one ActiveRecord model" do
     output = mock_pry('show-model Beer', 'exit-all')
 

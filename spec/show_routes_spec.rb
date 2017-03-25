@@ -17,11 +17,13 @@ describe "show-routes" do
     output = mock_pry('show-routes -G edit', 'exit-all')
 
     output.must_match %r{^edit_pokemon GET    /pokemon/edit}
+    output.must_match %r{^   edit_beer GET    /beer/edit}
   end
 
-  it "should print a list of routes which include grep option" do
+  it "should filter list based on multiple grep options" do
     output = mock_pry('show-routes -G edit -G pokemon', 'exit-all')
 
     output.must_match %r{^edit_pokemon GET    /pokemon/edit}
+    output.wont_match %r{edit_beer}
   end
 end
