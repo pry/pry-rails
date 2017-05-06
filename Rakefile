@@ -23,7 +23,13 @@ end
 
 desc 'Start the Rails console'
 task :console => :development_env do
-  require 'rails/commands/console'
+  if (Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR >= 1)
+    require 'rails/command'
+    require 'rails/commands/console/console_command'
+  else
+    require 'rails/commands/console'
+  end
+
   Rails::Console.start(Rails.application)
 end
 

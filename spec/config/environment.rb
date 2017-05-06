@@ -4,6 +4,11 @@ require 'active_support/core_ext'
 
 require 'pry-rails'
 
+begin
+  require 'mongoid'
+rescue LoadError # Mongoid doesn't support Rails 3.0
+end
+
 # Initialize our test app
 
 class TestApp < Rails::Application
@@ -58,9 +63,7 @@ class Pokemon < ActiveRecord::Base
   has_many :beers, :through => :hacker
 end
 
-begin
-  require 'mongoid'
-
+if defined?(Mongoid)
   class Artist
     include Mongoid::Document
 
@@ -75,5 +78,4 @@ begin
     field :name, :type => String
     embedded_in :artist
   end
-rescue LoadError # Mongoid doesn't support Rails 3.0
 end
