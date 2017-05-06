@@ -88,15 +88,27 @@ end
 
 # Developing and Testing
 
-To generate Gemfiles for Rails 3.0, 3.1, 3.2, 4.0, 4.1, and 4.2, run `rake
-appraisal:gemfiles appraisal:install`.
+This repo uses [Roadshow] to generate a [Docker Compose] file for each
+supported version of Rails (with a compatible version of Ruby for each one).
 
-You can then run the tests across all four versions with `rake appraisal`.  You
-can also manually run the Rails console and server with `rake appraisal
-console` and `rake appraisal server`.
+To run specs across all versions, you can either [get the Roadshow tool] and
+run `roadshow run`, or use Docker Compose directly:
 
-For a specific version of Rails, use `rake appraisal:rails30`, `rake
-appraisal:rails31`, `rake appraisal:rails32`, etc.
+```
+$ for fn in scenarios/*.docker-compose-yml; do docker-compose -f $fn run --rm scenario; done
+```
+
+You can also manually run the Rails console and server on each version with
+`roadshow run rake console` and `roadshow run rake server`, or run them on a
+specific version with, e.g., `roadshow run -s rails40 rake console`.
+
+To update the set of scenarios, edit `scenarios.yml` and run `roadshow
+generate`, although the Gemfiles in the `scenarios` directory need to be
+maintained manually.
+
+[Roadshow]: https://github.com/rf-/roadshow
+[Docker Compose]: https://docs.docker.com/compose/
+[get the Roadshow tool]: https://github.com/rf-/roadshow/releases
 
 # Alternative
 
