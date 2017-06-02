@@ -6,6 +6,11 @@ module PryRails
       require 'pry'
       require 'pry-rails/commands'
 
+      Pry.config.prompt = [
+        proc { "#{Rails.application.class.parent_name}(#{Rails.env})> " },
+        proc { "#{Rails.application.class.parent_name}(#{Rails.env})* " }
+      ]
+
       if Rails::VERSION::MAJOR == 3
         Rails::Console::IRB = Pry
 
