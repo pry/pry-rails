@@ -18,24 +18,26 @@ module PryRails
     end
   end
 
-  RAILS_PROMPT = [
-    proc do |target_self, nest_level, pry|
-      "[#{pry.input_array.size}] " \
-        "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
-        "#{Pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
-        "#{":#{nest_level}" unless nest_level.zero?}> "
-    end,
-    proc do |target_self, nest_level, pry|
-      "[#{pry.input_array.size}] " \
-        "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
-        "#{Pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
-        "#{":#{nest_level}" unless nest_level.zero?}* "
+  desc = "Includes the current Rails environment and project folder name.\n" \
+          "[1] [project_name][Rails.env] pry(main)>"
+  if Pry::Prompt.respond_to?(:add)
+    Pry::Prompt.add 'rails', desc, %w(> *) do |target, nesting, _pry_, sep|
+      "[#{pry.input_ring.size}] " \
+      "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
+      "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
+      "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
     end
-  ]
-
-  Pry::Prompt::MAP["rails"] = {
-    value: RAILS_PROMPT,
-    description: "Includes the current Rails environment and project folder name.\n" \
-                 "[1] [project_name][Rails.env] pry(main)>"
-  }
+  else
+    draw_prompt = lambda do |target_self, nest_level, pry, sep|
+      "[#{pry.input_array.size}] " \
+      "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
+      "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
+      "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
+    end
+    prompts = [
+      proc { |target_self, nest_level, pry| draw_prompt(target_self, nest_level, pry, '>') },
+      proc { |target_self, nest_level, pry| draw_prompt(target_self, nest_level, pry, '*') }
+    ]
+    Pry::Prompt::MAP["rails"] = {value: prompts, description: desc}
+  end
 end
