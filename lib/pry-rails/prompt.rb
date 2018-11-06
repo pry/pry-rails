@@ -21,7 +21,7 @@ module PryRails
   desc = "Includes the current Rails environment and project folder name.\n" \
           "[1] [project_name][Rails.env] pry(main)>"
   if Pry::Prompt.respond_to?(:add)
-    Pry::Prompt.add 'rails', desc, %w(> *) do |target, nesting, _pry_, sep|
+    Pry::Prompt.add 'rails', desc, %w(> *) do |target_self, nest_level, pry, sep|
       "[#{pry.input_ring.size}] " \
       "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
       "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
@@ -35,8 +35,12 @@ module PryRails
       "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
     end
     prompts = [
-      proc { |target_self, nest_level, pry| draw_prompt(target_self, nest_level, pry, '>') },
-      proc { |target_self, nest_level, pry| draw_prompt(target_self, nest_level, pry, '*') }
+      proc do |target_self, nest_level, pry|
+        draw_prompt.call(target_self, nest_level, pry, '>')
+      end,
+      proc do |target_self, nest_level, pry|
+        draw_prompt.call(target_self, nest_level, pry, '*')
+      end
     ]
     Pry::Prompt::MAP["rails"] = {value: prompts, description: desc}
   end
