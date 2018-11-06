@@ -28,21 +28,21 @@ describe "recognize-path" do
 
   it "prints info about controller/action that is bound to the given path" do
     output = mock_pry('recognize-path example.com', 'exit-all')
-    output.must_match /controller.+foo/
-    output.must_match /action.+index/
+    output.must_match(/controller.+foo/)
+    output.must_match(/action.+index/)
   end
 
   it "accepts short path" do
     output = mock_pry('recognize-path /booms/1/edit', 'exit-all')
-    output.must_match /action.+edit/
-    output.must_match /controller.+booms/
-    output.must_match /id.+1/
+    output.must_match(/action.+edit/)
+    output.must_match(/controller.+booms/)
+    output.must_match(/id.+1/)
   end
 
   it "accepts -m switch" do
     output = mock_pry('recognize-path example.com/booms -m post', 'exit-all')
-    output.must_match /controller.+booms/
-    output.must_match /action.+create/
+    output.must_match(/controller.+booms/)
+    output.must_match(/action.+create/)
   end
 
   it "doesn't accept unknown methods" do
