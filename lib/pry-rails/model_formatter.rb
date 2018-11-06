@@ -49,12 +49,12 @@ module PryRails
 
       model.relations.each do |other_model, ref|
         options = []
-        options << 'autosave'  if ref.options[:autosave]
-        options << 'autobuild' if ref.options[:autobuild]
-        options << 'validate'  if ref.options[:validate]
+        options << 'autosave'  if ref.options[:autosave] || ref.autosave?
+        options << 'autobuild' if ref.options[:autobuild] || ref.autobuilding?
+        options << 'validate'  if ref.options[:validate] || ref.validate?
 
-        if ref.options[:dependent]
-          options << "dependent-#{ref.options[:dependent]}"
+        if ref.options[:dependent] || ref.dependent
+          options << "dependent-#{ref.options[:dependent] || ref.dependent}"
         end
 
         out.push format_association \
@@ -82,13 +82,23 @@ module PryRails
     end
 
     def kind_of_relation(relation)
-      case relation.to_s.sub(/^Mongoid::Relations::/, '')
-        when 'Referenced::Many' then 'has_many'
-        when 'Referenced::One'  then 'has_one'
-        when 'Referenced::In'   then 'belongs_to'
-        when 'Embedded::Many'   then 'embeds_many'
-        when 'Embedded::One'    then 'embeds_one'
-        when 'Embedded::In'     then 'embedded_in'
+      case relation.to_s.sub(/^Mongoid::(Relations::|Association::)/, '')
+      when 'Referenced::Many', 'Referenced::HasMany::Proxy'
+        'has_many'
+      when 'Referenced::One', 'Referenced::HasOne::Proxy'
+        'has_one'
+      when 'Referenced::In', 'Referenced::BelongsTo::Proxy'
+        'belongs_to'
+      when 'Referenced::HasAndBelongsToMany::Proxy'
+        'has_and_belongs_to_many'
+      when 'Embedded::Many', 'Embedded::EmbedsMany::Proxy'
+        'embeds_many'
+      when 'Embedded::One', 'Embedded::EmbedsOne::Proxy'
+        'embeds_one'
+      when 'Embedded::In', 'Embedded::EmbeddedIn::Proxy'
+        'embedded_in'
+      else
+        '(unknown relation)'
       end
     end
 
