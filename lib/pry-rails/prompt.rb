@@ -13,7 +13,7 @@ module PryRails
       end
 
       def project_name
-        File.basename(Rails.root)
+        Rails.application.class.parent_name.underscore
       end
     end
   end
