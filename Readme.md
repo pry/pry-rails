@@ -78,13 +78,24 @@ irb(main):001:0>
 
 ## Custom Rails prompt
 
-If you want to include the current Rails environment and project name in the pry prompt, put the following lines in your project's `.pryrc`:
+If you want to permanently include the current Rails environment and project name
+in the Pry prompt, put the following lines in your project's `.pryrc`:
 
 ```ruby
-if defined?(PryRails::RAILS_PROMPT)
-  Pry.config.prompt = PryRails::RAILS_PROMPT
+Pry.config.prompt = Pry::Prompt[:rails][:value]
+```
+
+If `.pryrc` could be loaded without pry-rails being available or installed,
+guard against setting `Pry.config.prompt` to `nil`:
+
+```ruby
+if Pry::Prompt[:rails]
+  Pry.config.prompt = Pry::Prompt[:rails][:value]
 end
 ```
+
+Check out `change-prompt --help` for information about temporarily
+changing the prompt for the current Pry session.
 
 # Developing and Testing
 
