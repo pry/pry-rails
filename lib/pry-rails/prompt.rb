@@ -13,7 +13,7 @@ module PryRails
       end
 
       def project_name
-        if Rails::VERSION::MAJOR == 6
+        if Rails::VERSION::MAJOR >= 6
           Rails.application.class.module_parent_name.underscore
         else
           Rails.application.class.parent_name.underscore

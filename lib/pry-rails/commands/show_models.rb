@@ -40,6 +40,10 @@ class PryRails::ShowModels < Pry::ClassCommand
     models = []
 
     ObjectSpace.each_object do |o|
+      # If this is deprecated, calling any methods on it will emit a warning,
+      # so just back away slowly.
+      next if ActiveSupport::Deprecation::DeprecationProxy === o
+
       is_model = false
 
       begin
