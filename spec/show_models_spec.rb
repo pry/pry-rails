@@ -58,7 +58,7 @@ MODELS
       expected_output += mongoid_models
     end
 
-    if Rails.version.to_s =~ /^5/
+    if Rails::VERSION::MAJOR >= 5
       expected_output = internal_models + expected_output
     end
 

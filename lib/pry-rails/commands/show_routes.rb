@@ -17,10 +17,12 @@ class PryRails::ShowRoutes < Pry::ClassCommand
     Rails.application.reload_routes!
     all_routes = Rails.application.routes.routes
 
-    formatted = case Rails.version.to_s
-      when /^[45]/
+    formatted =
+      if Rails::VERSION::MAJOR >= 6
+        process_rails_6_and_higher(all_routes)
+      elsif Rails::VERSION::MAJOR == 4 || Rails::VERSION::MAJOR == 5
         process_rails_4_and_5(all_routes)
-      when /^3\.2/
+      elsif Rails::VERSION::MAJOR >= 3 && Rails::VERSION::MINOR >= 2
         process_rails_3_2(all_routes)
       else
         process_rails_3_0_and_3_1(all_routes)
@@ -64,12 +66,26 @@ class PryRails::ShowRoutes < Pry::ClassCommand
 
   def process_rails_3_2(all_routes)
     require 'rails/application/route_inspector'
+
     Rails::Application::RouteInspector.new.format(all_routes)
   end
 
   def process_rails_4_and_5(all_routes)
     require 'action_dispatch/routing/inspector'
-    ActionDispatch::Routing::RoutesInspector.new(all_routes).format(ActionDispatch::Routing::ConsoleFormatter.new).split(/\n/)
+
+    ActionDispatch::Routing::RoutesInspector.
+      new(all_routes).
+      format(ActionDispatch::Routing::ConsoleFormatter.new).
+      split(/\n/)
+  end
+
+  def process_rails_6_and_higher(all_routes)
+    require 'action_dispatch/routing/inspector'
+
+    ActionDispatch::Routing::RoutesInspector.
+      new(all_routes).
+      format(ActionDispatch::Routing::ConsoleFormatter::Sheet.new).
+      split(/\n/)
   end
 
   PryRails::Commands.add_command(self)

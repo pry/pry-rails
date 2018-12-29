@@ -2,7 +2,7 @@ project: pryrails
 
 shared:
   from: ruby:2.4
-  cmd: "(bundle check || bundle install) && bundle exec rake"
+  cmd: "(bundle check || (gem install bundler && bundle install)) && bundle exec rake"
   service:
     volumes:
       - bundle_{{scenario_name}}:/usr/local/bundle
@@ -25,3 +25,6 @@ scenarios:
   rails42: {}
   rails50: {}
   rails51: {}
+  rails52: {}
+  rails60:
+    from: ruby:2.5

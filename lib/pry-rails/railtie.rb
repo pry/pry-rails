@@ -14,14 +14,12 @@ module PryRails
         end
       end
 
-      if Rails::VERSION::MAJOR == 4 || Rails::VERSION::MAJOR == 5 ||
-         Rails::VERSION::MAJOR == 6
+      if Rails::VERSION::MAJOR >= 4
         Rails.application.config.console = Pry
       end
 
       if (Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR >= 2) ||
-          Rails::VERSION::MAJOR == 4 || Rails::VERSION::MAJOR == 5 ||
-          Rails::VERSION::MAJOR == 6
+          Rails::VERSION::MAJOR >= 4
         require "rails/console/app"
         require "rails/console/helpers"
         TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods

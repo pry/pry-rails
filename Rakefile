@@ -23,7 +23,8 @@ end
 
 desc 'Start the Rails console'
 task :console => :development_env do
-  if (Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR >= 1)
+  if (Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR >= 1) ||
+      Rails::VERSION::MAJOR >= 6
     require 'rails/command'
     require 'rails/commands/console/console_command'
   else
