@@ -4,7 +4,10 @@ module PryRails
   class Railtie < Rails::Railtie
     console do
       require 'pry'
+      require 'pry-rails/version'
       require 'pry-rails/commands'
+      require 'pry-rails/model_formatter'
+      require 'pry-rails/prompt'
 
       if Rails::VERSION::MAJOR == 3
         Rails::Console::IRB = Pry
