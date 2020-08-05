@@ -82,7 +82,7 @@ If you want to permanently include the current Rails environment and project nam
 in the Pry prompt, put the following lines in your project's `.pryrc`:
 
 ```ruby
-Pry.config.prompt = Pry::Prompt[:rails][:value]
+Pry.config.prompt = Pry::Prompt[:rails]
 ```
 
 If `.pryrc` could be loaded without pry-rails being available or installed,
@@ -90,7 +90,7 @@ guard against setting `Pry.config.prompt` to `nil`:
 
 ```ruby
 if Pry::Prompt[:rails]
-  Pry.config.prompt = Pry::Prompt[:rails][:value]
+  Pry.config.prompt = Pry::Prompt[:rails]
 end
 ```
 
