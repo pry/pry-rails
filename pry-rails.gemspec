@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency "pry", ">= 0.10.4"
+  s.add_dependency "pry", ">= 0.13.0"
   s.add_development_dependency "appraisal"
   s.add_development_dependency "minitest"
 end
