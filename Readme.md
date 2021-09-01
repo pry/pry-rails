@@ -1,3 +1,6 @@
+	This project is not actively maintained and looking for a maintainer!
+
+
 # Description
 
 Avoid repeating yourself, use pry-rails instead of copying the initializer to every rails project.
