@@ -4,7 +4,7 @@
 # Description
 
 Avoid repeating yourself, use pry-rails instead of copying the initializer to every rails project.
-This is a small gem which causes `rails console` to open [pry](http://pry.github.com/). It therefore depends on *pry*.
+This is a small gem which causes `rails console` to open [pry](https://pry.github.io/). It therefore depends on *pry*.
 
 # Prerequisites
 
@@ -109,7 +109,7 @@ To run specs across all versions, you can either [get the Roadshow tool] and
 run `roadshow run`, or use Docker Compose directly:
 
 ```
-$ for fn in scenarios/*.docker-compose-yml; do docker-compose -f $fn run --rm scenario; done
+$ for fn in scenarios/*.docker-compose.yml; do docker-compose -f $fn run --rm scenario; done
 ```
 
 You can also manually run the Rails console and server on each version with
