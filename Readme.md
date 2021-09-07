@@ -74,9 +74,6 @@ Pokemon
   updated_at: datetime
   belongs_to hacker
   has_many beers through hacker
-
-$ DISABLE_PRY_RAILS=1 rails console
-irb(main):001:0>
 ```
 
 ## Custom Rails prompt
@@ -99,6 +96,12 @@ end
 
 Check out `change-prompt --help` for information about temporarily
 changing the prompt for the current Pry session.
+
+## Disable pry-rails
+If pry-rails is included in your application but you would prefer not to use it, you may run the following command to set the appropriate environment variable to disable initialization and fall back to the default IRB console:
+```shell
+DISABLE_PRY_RAILS=1 rails console
+```
 
 # Developing and Testing
 
