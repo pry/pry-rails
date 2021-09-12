@@ -97,7 +97,7 @@ end
 Check out `change-prompt --help` for information about temporarily
 changing the prompt for the current Pry session.
 
-## Disable pry-rails
+## Disabling pry-rails
 
 If pry-rails is included in your application but you would prefer not to use it, you may run the following command to set the appropriate environment variable to disable initialization and fall back to the default IRB console:
 ```shell
