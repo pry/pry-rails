@@ -52,11 +52,11 @@ class PryRails::FindRoute < Pry::ClassCommand
     if all_routes.any?
       grouped_routes = all_routes.group_by { |route| route.defaults[:controller] }
       result = grouped_routes.each_with_object("") do |(controller, routes), res|
-        res << "Routes for " + text.bold(controller.to_s.camelize + "Controller") + "\n"
+        res << "Routes for " + bold(controller.to_s.camelize + "Controller") + "\n"
         res << "--\n"
         routes.each do |route|
           spec = route.path.is_a?(String) ? route.path : route.path.spec
-          res << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{spec}  #{route_helper(route.name)}" + "\n"
+          res << "#{route.defaults[:action]} #{bold(verb_for(route))} #{spec}  #{route_helper(route.name)}" + "\n"
         end
         res << "\n"
       end
