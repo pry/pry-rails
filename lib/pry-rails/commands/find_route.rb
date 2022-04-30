@@ -78,6 +78,10 @@ class PryRails::FindRoute < Pry::ClassCommand
     controller =~ /#/
   end
 
+  def text
+    Pry::Helpers::Text
+  end
+
   PryRails::Commands.add_command(self)
 end
 
