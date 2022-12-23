@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 module PryRails
   class ModelFormatter
@@ -10,8 +10,8 @@ module PryRails
         model.columns.each do |column|
           out.push format_column column.name, column.type
         end
-      else
-        out.push format_error "Table doesn't exist"
+        # else
+        # out.push format_error "Table doesn't exist"
       end
 
       reflections = model.reflections.sort_by do |other_model, reflection|
@@ -73,7 +73,12 @@ module PryRails
     end
 
     def format_association(type, other, options = [])
-      options_string = (options.any?) ? " (#{options.join(', ')})" : ''
+      options_string = if options.any?
+                         " (#{options.join(', ')})"
+                       else
+                         ''
+                       end
+
       "  #{type} #{text.blue ":#{other}"}#{options_string}"
     end
 

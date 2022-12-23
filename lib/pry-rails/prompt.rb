@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PryRails
   class Prompt
     class << self
@@ -18,25 +20,28 @@ module PryRails
         else
           Rails.application.class.parent_name.underscore
         end
+      rescue
+        'rails_app' # local installation debugging
       end
     end
   end
 
   desc = "Includes the current Rails environment and project folder name.\n" \
-          "[1] [project_name][Rails.env] pry(main)>"
+         '[1] [project_name][Rails.env] pry(main)>'
+
   if Pry::Prompt.respond_to?(:add)
-    Pry::Prompt.add 'rails', desc, %w(> *) do |target_self, nest_level, pry, sep|
+    Pry::Prompt.add 'rails', desc, %w[> *] do |target_self, nest_level, pry, sep|
       "[#{pry.input_ring.size}] " \
-      "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
-      "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
-      "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
+        "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
+        "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
+        "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
     end
   else
     draw_prompt = lambda do |target_self, nest_level, pry, sep|
       "[#{pry.input_array.size}] " \
-      "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
-      "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
-      "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
+        "[#{Prompt.project_name}][#{Prompt.formatted_env}] " \
+        "#{pry.config.prompt_name}(#{Pry.view_clip(target_self)})" \
+        "#{":#{nest_level}" unless nest_level.zero?}#{sep} "
     end
     prompts = [
       proc do |target_self, nest_level, pry|
@@ -46,6 +51,6 @@ module PryRails
         draw_prompt.call(target_self, nest_level, pry, '*')
       end
     ]
-    Pry::Prompt::MAP["rails"] = {value: prompts, description: desc}
+    Pry::Prompt::MAP['rails'] = { value: prompts, description: desc }
   end
 end

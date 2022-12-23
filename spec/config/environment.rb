@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails'
 require 'rails/all'
 require 'active_support/core_ext'
@@ -6,18 +8,18 @@ require 'pry-rails'
 
 begin
   require 'mongoid'
-rescue LoadError # Mongoid doesn't support Rails 3.0
+rescue LoadError
+  # Mongoid doesn't support Rails 3.0
 end
 
 # Initialize our test app
-
 class TestApp < Rails::Application
   config.active_support.deprecation = :log
   config.eager_load = false
 
   config.secret_token = 'a' * 100
 
-  config.root = File.expand_path('../..', __FILE__)
+  config.root = File.expand_path('..', __dir__)
 end
 
 TestApp.initialize!
@@ -60,14 +62,14 @@ end
 
 class Pokemon < ActiveRecord::Base
   belongs_to :hacker
-  has_many :beers, :through => :hacker
+  has_many :beers, through: :hacker
 end
 
 if defined?(Mongoid)
   class Artist
     include Mongoid::Document
 
-    field :name, :type => String
+    field :name, type: String
     embeds_one :beer
     embeds_many :instruments
   end
@@ -75,7 +77,7 @@ if defined?(Mongoid)
   class Instrument
     include Mongoid::Document
 
-    field :name, :type => String
+    field :name, type: String
     embedded_in :artist
   end
 end

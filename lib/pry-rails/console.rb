@@ -1,7 +1,4 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 require 'pry-rails/version'
-
-if defined?(Rails)
-  require 'pry-rails/railtie'
-end
+require 'pry-rails/railtie' if defined?(Rails)

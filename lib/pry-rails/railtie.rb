@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 module PryRails
   class Railtie < Rails::Railtie
@@ -9,19 +9,14 @@ module PryRails
       if Rails::VERSION::MAJOR == 3
         Rails::Console::IRB = Pry
 
-        unless defined? Pry::ExtendCommandBundle
-          Pry::ExtendCommandBundle = Module.new
-        end
+        Pry::ExtendCommandBundle = Module.new unless defined? Pry::ExtendCommandBundle
       end
 
-      if Rails::VERSION::MAJOR >= 4
-        Rails.application.config.console = Pry
-      end
+      Rails.application.config.console = Pry if Rails::VERSION::MAJOR >= 4
 
-      if (Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR >= 2) ||
-          Rails::VERSION::MAJOR >= 4
-        require "rails/console/app"
-        require "rails/console/helpers"
+      if (Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR >= 2) || Rails::VERSION::MAJOR >= 4
+        require 'rails/console/app'
+        require 'rails/console/helpers'
         TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
       end
     end

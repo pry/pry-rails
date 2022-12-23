@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PryRails::RecognizePath < Pry::ClassCommand
   match 'recognize-path'
   group 'Rails'
@@ -13,7 +15,7 @@ class PryRails::RecognizePath < Pry::ClassCommand
   BANNER
 
   def options(opt)
-    opt.on :m, :method, "Methods", :argument => true
+    opt.on :m, :method, 'Methods', argument: true
   end
 
   def process(path)
@@ -21,7 +23,7 @@ class PryRails::RecognizePath < Pry::ClassCommand
     routes = Rails.application.routes
 
     begin
-      info = routes.recognize_path("http://#{path}", :method => method)
+      info = routes.recognize_path("http://#{path}", method: method)
     rescue ActionController::UnknownHttpMethod
       output.puts "Unknown HTTP method: #{method}"
     rescue ActionController::RoutingError => e

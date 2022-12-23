@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require 'minitest/autorun'
 require 'config/environment'
 
 # Pry testing stuff (taken from Pry itself)
 
 Pry.color = false
+Pry.config.color = false
 
 def redirect_pry_io(new_in, new_out = StringIO.new)
   old_in  = Pry.input
@@ -26,7 +29,7 @@ def mock_pry(*args)
   output  = StringIO.new
 
   redirect_pry_io(input, output) do
-    Pry.start(binding, :hooks => Pry::Hooks.new)
+    Pry.start(binding, hooks: Pry::Hooks.new)
   end
 
   output.string

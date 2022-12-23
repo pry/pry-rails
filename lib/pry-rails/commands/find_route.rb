@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# find-route
 class PryRails::FindRoute < Pry::ClassCommand
   match 'find-route'
   group 'Rails'
@@ -35,8 +38,8 @@ class PryRails::FindRoute < Pry::ClassCommand
   end
 
   def controller_and_action_from(controller_and_action)
-    controller, action = controller_and_action.split("#")
-    {controller: normalize_controller_name(controller), action: action}
+    controller, action = controller_and_action.split('#')
+    { controller: normalize_controller_name(controller), action: action }
   end
 
   def routes
@@ -49,21 +52,20 @@ class PryRails::FindRoute < Pry::ClassCommand
 
   def show_routes(&block)
     all_routes = routes.select(&block)
-    if all_routes.any?
-      grouped_routes = all_routes.group_by { |route| route.defaults[:controller] }
-      result = grouped_routes.each_with_object("") do |(controller, routes), res|
-        res << "Routes for " + text.bold(controller.to_s.camelize + "Controller") + "\n"
-        res << "--\n"
-        routes.each do |route|
-          spec = route.path.is_a?(String) ? route.path : route.path.spec
-          res << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{spec}  #{route_helper(route.name)}" + "\n"
-        end
-        res << "\n"
+    output.puts 'No routes found.' unless all_routes.any?
+
+    grouped_routes = all_routes.group_by { |route| route.defaults[:controller] }
+
+    result = grouped_routes.each_with_object([]) do |(controller, routes), res|
+      controller_route = text.bold("#{controller.to_s.camelize}Controller")
+      res << "Routes for #{controller_route}\n--\n"
+      routes.each do |route|
+        spec = route.path.is_a?(String) ? route.path : route.path.spec
+        res << "#{route.defaults[:action]} #{text.bold(verb_for(route))} #{spec}  #{route_helper(route.name)}\n"
       end
-      stagger_output result
-    else
-      output.puts "No routes found."
-    end
+      res << "\n"
+    end.join
+    stagger_output result
   end
 
   def route_helper(name)
@@ -71,14 +73,19 @@ class PryRails::FindRoute < Pry::ClassCommand
   end
 
   def verb_for(route)
-    %w(GET PUT POST PATCH DELETE).find { |v| route.verb === v }
+    %w[GET PUT POST PATCH DELETE].find { |v| route.verb === v }
   end
 
   def single_action?(controller)
     controller =~ /#/
   end
 
+  # FIXME: check it out why the text method from the original repo is missing
+  def text
+    Pry::Helpers::Text
+  end
+
   PryRails::Commands.add_command(self)
 end
 
-PryRails::Commands.alias_command "find-routes", "find-route"
+PryRails::Commands.alias_command 'find-routes', 'find-route'

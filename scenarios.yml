@@ -28,3 +28,5 @@ scenarios:
   rails52: {}
   rails60:
     from: ruby:2.5
+  rails70:
+    from: ruby:3.1.3

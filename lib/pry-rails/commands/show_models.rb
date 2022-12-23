@@ -1,9 +1,9 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 class PryRails::ShowModels < Pry::ClassCommand
-  match "show-models"
-  group "Rails"
-  description "Show all models."
+  match 'show-models'
+  group 'Rails'
+  description 'Show all models.'
 
   def options(opt)
     opt.banner unindent <<-USAGE
@@ -12,7 +12,7 @@ class PryRails::ShowModels < Pry::ClassCommand
       show-models displays the current Rails app's models.
     USAGE
 
-    opt.on :G, "grep", "Filter output by regular expression", :argument => true
+    opt.on :G, 'grep', 'Filter output by regular expression', argument: true
   end
 
   def process
@@ -39,17 +39,23 @@ class PryRails::ShowModels < Pry::ClassCommand
 
     models = []
 
+    mongo = ->(obj) do
+      return false unless obj.instance_of?(Class)
+      return false unless obj.ancestors.include?(Mongoid::Document)
+      return false if obj.ancestors.include? Mongoid::GlobalDiscriminatorKeyAssignment::InvalidFieldHost
+
+      true
+    end
+
     ObjectSpace.each_object do |o|
-      # If this is deprecated, calling any methods on it will emit a warning,
-      # so just back away slowly.
       next if ActiveSupport::Deprecation::DeprecationProxy === o
 
       is_model = false
 
       begin
-        is_model = o.class == Class && o.ancestors.include?(Mongoid::Document)
-      rescue
-        # If it's a weird object, it's not what we want anyway.
+        is_model = mongo[o]
+      rescue StandardError => e
+        p e
       end
 
       models << o if is_model
@@ -63,6 +69,7 @@ class PryRails::ShowModels < Pry::ClassCommand
   def print_unless_filtered(str)
     if opts.present?(:G)
       return unless str =~ grep_regex
+
       str = colorize_matches(str) # :(
     end
     output.puts str

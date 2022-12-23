@@ -1,9 +1,9 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 class PryRails::ShowModel < Pry::ClassCommand
-  match "show-model"
-  group "Rails"
-  description "Show the given model."
+  match 'show-model'
+  group 'Rails'
+  description 'Show the given model.'
 
   def options(opt)
     opt.banner unindent <<-USAGE
@@ -30,14 +30,20 @@ class PryRails::ShowModel < Pry::ClassCommand
 
     formatter = PryRails::ModelFormatter.new
 
-    case
-    when defined?(ActiveRecord::Base) && model < ActiveRecord::Base
-      output.puts formatter.format_active_record(model)
-    when defined?(Mongoid::Document) && model < Mongoid::Document
-      output.puts formatter.format_mongoid(model)
-    else
-      output.puts "Don't know how to show #{model}!"
+    # fixed to use both AR & MongoId
+    result = []
+    if defined?(ActiveRecord::Base) && model < ActiveRecord::Base
+      models = true
+      result << formatter.format_active_record(model)
     end
+
+    if defined?(Mongoid::Document) && model < Mongoid::Document
+      models = true
+      result << formatter.format_mongoid(model)
+    end
+
+    result = ["Don't know how to show #{model}!"] unless models
+    output.puts result.join
   end
 end
 

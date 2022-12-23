@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PryRails::ShowMiddleware < Pry::ClassCommand
   match 'show-middleware'
   group 'Rails'
@@ -13,7 +15,7 @@ class PryRails::ShowMiddleware < Pry::ClassCommand
   BANNER
 
   def options(opt)
-    opt.on :G, "grep", "Filter output by regular expression", :argument => true
+    opt.on :G, 'grep', 'Filter output by regular expression', argument: true
   end
 
   def process
@@ -26,15 +28,15 @@ class PryRails::ShowMiddleware < Pry::ClassCommand
     middlewares = []
 
     if server
-      stack = server.instance_variable_get("@wrapped_app")
+      stack = server.instance_variable_get('@wrapped_app')
       middlewares << stack.class.to_s
 
-      while stack.instance_variable_defined?("@app") do
-        stack = stack.instance_variable_get("@app")
+      while stack.instance_variable_defined?('@app')
+        stack = stack.instance_variable_get('@app')
         # Rails 3.0 uses the Application class rather than the application
         # instance itself, so we grab the instance.
-        stack = Rails.application  if stack == Rails.application.class
-        middlewares << stack.class.to_s  if stack != Rails.application
+        stack = Rails.application if stack == Rails.application.class
+        middlewares << stack.class.to_s if stack != Rails.application
       end
     else
       middleware_names = Rails.application.middleware.map do |middleware|
@@ -49,16 +51,16 @@ class PryRails::ShowMiddleware < Pry::ClassCommand
       middlewares.concat middleware_names
     end
     middlewares << Rails.application.class.to_s
-    print_middleware middlewares.grep(Regexp.new(opts[:G] || "."))
+    print_middleware middlewares.grep(Regexp.new(opts[:G] || '.'))
   end
 
   def print_middleware(middlewares)
     middlewares.each do |middleware|
       string = if middleware == Rails.application.class.to_s
-        "run #{middleware}.routes"
-      else
-        "use #{middleware}"
-      end
+                 "run #{middleware}.routes"
+               else
+                 "use #{middleware}"
+               end
       output.puts string
     end
   end
