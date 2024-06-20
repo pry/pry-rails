@@ -17,10 +17,14 @@ class PryRails::ShowMiddleware < Pry::ClassCommand
   end
 
   def process
-    # assumes there is only one Rack::Server instance
+    # Assumes there is only one Rack::Server instance.
+    # TODO: Figure out what replaced Rack::Server so that we can show the
+    # entire middleware stack on recent Rails versions.
     server = nil
-    ObjectSpace.each_object(Rack::Server) do |object|
-      server = object
+    if defined?(Rack::Server)
+      ObjectSpace.each_object(Rack::Server) do |object|
+        server = object
+      end
     end
 
     middlewares = []
